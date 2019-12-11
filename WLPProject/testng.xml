@@ -1,0 +1,176 @@
+<suite name="CLR_Project">
+
+
+
+	<test name="CLR_DTSState" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyTradingStatement.DTS_State" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_DTSBU" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyTradingStatement.DTSBusinessUnit" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_DTSwow" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyTradingStatement.DTSWOWGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 		
+	
+
+
+	<test name="CLR_DPState" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyPlanning.DailyPlanningState" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+		<test name="CLR_DPBU" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyPlanning.DailyPlanningBusinessUnit"/>
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_DPWow" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.DailyPlanning.DailyPlanningWOWGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test>	
+	
+
+
+	<test name="CLR_ZDTScc" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyTradingStatement.WeeklyTradingStatementState" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	
+	<test name="CLR_ZDTSqq" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyTradingStatement.WeeklyTradingStatementBU" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_ZDTSdee" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyTradingStatement.WeeklyTradingStatementWOWGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test>	
+	
+
+	<test name="CLR_ZDTSccw" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyTradingStatement.MonthlyTradingStatementState" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	
+		<test name="CLR_ZDTSqqw" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyTradingStatement.MonthlyTradingStatementBU" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_ZDTSdeew" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyTradingStatement.MonthlyTradingStatementWOWGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	
+	 
+	
+	
+	<test name="CLR_WPState" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyPlanning.WeeklyPlanningState" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	
+	<test name="CLR_WPBU" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyPlanning.WeeklyPlanningBusinessUnit" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 
+	<test name="CLR_WPWow" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.WeeklyPlanning.WeeklyPlanningWoolworthsGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test> 	
+	
+	
+	<test name="CLR_MPState" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyPlanning.MonthlyPlanningState" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test>
+	
+ 
+	
+	<test name="CLR_MPBU" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyPlanning.MonthlyPlanningBusinessUnit" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test>
+	<test name="CLR_MPWow" parallel="classes" thread-count="1">
+			<classes>
+				<class name="au.wow.WLPmain.MonthlyPlanning.MonthlyPlanningWoolworthsGroup" />
+			   <listeners>
+					<listener class-name="au.wow.wlp.utils.RetryListener" />
+			   </listeners> 
+			</classes>
+	</test>   
+	  
+
+ 
+
+
+	
+	
+</suite>

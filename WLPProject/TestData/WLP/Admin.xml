@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+<TCName name = "VariableWageRateFactor" >
+<VariableWageRateFactorAllQuery>
+select b.state_nm,c.fin_wk_no||' - '||'W/C '||c.wk_strt||' '||c.perd as week,a.pst_factor,a.ngt_factor from wage_fctr_cnfg a, RGN_STATE_LINK b, wk c  
+where a.rgn_no=b.rgn_no and a.wk_id=c.wk_id and a.wk_id in ('Week') 
+order by b.state_nm
+</VariableWageRateFactorAllQuery>
+<VariableWageRateFactorQuery>
+select b.state_nm,c.fin_wk_no||' - '||'W/C '||c.wk_strt||' '||c.perd as week,a.pst_factor,a.ngt_factor from wage_fctr_cnfg a, RGN_STATE_LINK b, wk c  
+where a.rgn_no=b.rgn_no and a.wk_id=c.wk_id and a.rgn_no in ('Region') and a.wk_id in ('Week') 
+order by b.state_nm
+</VariableWageRateFactorQuery>
+</TCName>
+
+<TCName name = "EditablePlannedItemPriceToggle" >
+<PlanItemPriceToggleuserid>
+select distinct upd_usrid from global_parm where parm_id='STATE_PLAN_EDITABILITY'
+</PlanItemPriceToggleuserid>
+<PlanItemPriceToggleTime>
+select distinct SUBSTR(upd_tmstmp,10,9) as upd_tme from global_parm where parm_id='STATE_PLAN_EDITABILITY'
+</PlanItemPriceToggleTime>	
+<PlanItemPriceToggledate>
+select distinct trunc(upd_tmstmp) as upd_dte from global_parm where parm_id='STATE_PLAN_EDITABILITY'
+</PlanItemPriceToggledate>
+</TCName>
+
+</configuration>

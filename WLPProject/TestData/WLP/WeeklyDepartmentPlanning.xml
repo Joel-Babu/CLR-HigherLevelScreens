@@ -1,0 +1,2561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+<TCName name = "SummaryInfoValidation" >
+	<PlannedSales>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.PLAN_SALES_WPS),0),0) as PLN_SLS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store' 
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) c
+UNION
+select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and  d.div_no='Division' and a.dept_no IN (Department)
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.mgr_pln_sls_dte,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS 
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and  d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.mgr_pln_sls_dte
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.mgr_pln_sls_dte))
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) d) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</PlannedSales>
+	
+	<BudgetSales>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.BDGT_SALES_WPS),0),0) as BDGT_SLS_TOT_WPS from (select loc_nm from loc where loc_no='store') f LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,
+ROUND(sum(a.bdgt_wage_amt),0) as BDGT_WAGE_WPS from ww_wlp.wky_bdgt a,wk b,loc c,dept d where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</BudgetSales>
+	<ForecastSales>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.FCST_SALES_WPS),0),0) as FCST_SLS_TOT_WPS from (select loc_nm from loc where loc_no='store') f LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.frcst_sls),0) as FCST_SALES_WPS,
+ROUND(sum(a.frcst_wage_amt),0) as FCST_WAGE_WPS from ww_wlp.MNTH_FCST a,wk b,loc c,dept d where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</ForecastSales>
+	
+	<PlannedWages>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.PLN_WAGE_WPS),0),0) as PLN_WGE_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND((sum(nvl(a.TA_PLN_WAGE_AMT,0)) + sum(nvl(a.WAGE_ADJ_AMT,0))),0) as PLN_WAGE_WPS,
+ROUND((sum(nvl(a.TA_PLN_HRS,0)) + sum(nvl(a.WAGE_ADJ_HRS,0))),0) as PLN_HOURS_WPS
+from ww_wlp.wky_dept_pln a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</PlannedWages>
+	
+	<BudgetWages>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.BDGT_WAGE_WPS),0),0) as BDGT_WGE_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,ROUND(sum(a.bdgt_wage_amt),0) as BDGT_WAGE_WPS
+from ww_wlp.wky_bdgt a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</BudgetWages>
+	<ForecastWages>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.fcst_WAGE_WPS),0),0) as fcst_WGE_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.frcst_sls),0) as fcst_SALES_WPS,ROUND(sum(a.frcst_wage_amt),0) as fcst_WAGE_WPS
+from ww_wlp.mnth_fcst a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</ForecastWages>
+	
+	<PlannedWagesPercentage>
+	<![CDATA[select wge.loc_nm,ROUND((wge.PLN_WGE_TOT_WPS / sls.PLN_SLS_TOT_WPS)*100,2) as PLN_WGE_PCT_TOT_WPS from 
+(select f.loc_nm,NVL(ROUND(sum(e.PLN_WAGE_WPS),0),0) as PLN_WGE_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND((sum(nvl(a.TA_PLN_WAGE_AMT,0)) + sum(nvl(a.WAGE_ADJ_AMT,0))),0) as PLN_WAGE_WPS,
+ROUND((sum(nvl(a.TA_PLN_HRS,0)) + sum(nvl(a.WAGE_ADJ_HRS,0))),0) as PLN_HOURS_WPS
+from ww_wlp.wky_dept_pln a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) wge,
+(select f.loc_nm,NVL(ROUND(sum(e.PLAN_SALES_WPS),0),0) as PLN_SLS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) c
+UNION
+select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.mgr_pln_sls_dte,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS 
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.mgr_pln_sls_dte
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.mgr_pln_sls_dte))
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) d) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) sls
+where wge.loc_nm=sls.loc_nm]]>
+	</PlannedWagesPercentage>
+	
+	<BudgetWagesPercentage>
+	<![CDATA[select wge.loc_nm,NVL(ROUND((wge.BDGT_WGE_TOT_WPS / sls.BDGT_SLS_TOT_WPS)*100,2),0) as BDGT_WGE_PCT_TOT_WPS from 
+(select f.loc_nm,ROUND(sum(e.BDGT_WAGE_WPS),0) as BDGT_WGE_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,ROUND(sum(a.bdgt_wage_amt),0) as BDGT_WAGE_WPS
+from ww_wlp.wky_bdgt a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) wge,
+(select f.loc_nm,ROUND(sum(e.BDGT_SALES_WPS),0) as BDGT_SLS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,ROUND(sum(a.bdgt_wage_amt),0) as BDGT_WAGE_WPS
+from ww_wlp.wky_bdgt a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) sls
+where wge.loc_nm=sls.loc_nm order by wge.loc_nm]]>
+	</BudgetWagesPercentage>
+	<ForecastWagesPercentage>
+	<![CDATA[select wge_sls.loc_nm,
+case when NVL(wge_sls.fcst_WGE_TOT_WPS,0)=0 and  NVL(wge_sls.frcst_sls_TOT_WPS,0)=0 then 0 
+when NVL(wge_sls.fcst_WGE_TOT_WPS,0)=0 then 0 when NVL(wge_sls.frcst_sls_TOT_WPS,0)=0 then 0
+else NVL(ROUND((wge_sls.fcst_WGE_TOT_WPS / wge_sls.frcst_sls_TOT_WPS),2),0) end as fcst_WGE_PCT_TOT_WPS from 
+(select f.loc_nm,ROUND(sum(e.fcst_WAGE_WPS),0) as fcst_WGE_TOT_WPS,ROUND(sum(e.fcst_SALES_WPS),0) as frcst_sls_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.frcst_sls),0) as fcst_SALES_WPS,ROUND(sum(a.frcst_wage_amt),0) as fcst_WAGE_WPS
+from ww_wlp.mnth_fcst a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) wge_sls
+order by wge_sls.loc_nm]]>
+	</ForecastWagesPercentage>
+		
+	<PlannedHours>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.PLN_HOURS_WPS),2),0) as PLN_HRS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND((sum(nvl(a.TA_PLN_WAGE_AMT,0)) + sum(nvl(a.WAGE_ADJ_AMT,0))),0) as PLN_WAGE_WPS,
+ROUND((sum(nvl(a.TA_PLN_HRS,0)) + sum(nvl(a.WAGE_ADJ_HRS,0))),0) as PLN_HOURS_WPS
+from ww_wlp.wky_dept_pln a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</PlannedHours>
+	
+	<BudgetHours>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.BDGT_HOURS_WPS),2),0) as BDGT_HRS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,ROUND(sum(a.bdgt_hrs),2) as BDGT_HOURS_WPS
+from ww_wlp.wky_bdgt a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.fin_wk_no='FinWk' and b.fin_yr='FinYear'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</BudgetHours>
+	<ForecastHours>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.FCST_HOURS_WPS),2),0) as FCST_HRS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND(sum(a.frcst_sls),0) as fcst_SALES_WPS,ROUND(sum(a.plan_paid_hours),2) as FCST_HOURS_WPS
+from ww_wlp.mnth_fcst a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.fin_wk_no='FinWk' and b.fin_yr='FinYear'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</ForecastHours>
+	
+	<PlannedOR>
+	<![CDATA[select sms_hrs.loc_nm,ROUND((sms_hrs.SMS_HRS_TOT_WPS / pln_hrs.PLN_HRS_TOT_WPS)*100,2) as PLN_OR_TOT_WPS from 
+(select x.loc_nm,ROUND(sum(y.SMS_HRS_WPS),2) as SMS_HRS_TOT_WPS from 
+(select loc_no,loc_nm from loc where loc_no='store') x
+LEFT OUTER JOIN
+(select C.loc_nm,C.dept_nm,ROUND((C.FIX_HRS_DEPT_TOT + C.VOL_HRS_DEPT_TOT),2) as SMS_HRS_WPS from 
+(select A.loc_no,A.loc_nm,A.dept_nm,A.dply_seq,sum(fix_hrs) as FIX_HRS_DEPT_TOT,Sum(vol_hrs) as VOL_HRS_DEPT_TOT from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,B.PERD_DESC,a.wk_id,d.dept_no,dpt.dply_seq,dpt.dept_nm,a.task_no,
+nvl(a.fix_hrs,0) as fix_hrs,NVL(a.vol_hrs,0) as vol_hrs 
+from ww_wlp.lbr_std a, ww_wlp.wk b, ww_wlp.loc c, ww_wlp.task d, ww_wlp.dept dpt
+where a.task_no=d.task_no and a.wk_id=b.wk_id and a.loc_no=c.loc_no 
+and d.dept_no IN (Department) and b.wk_id='Week' and c.div_no='Division' and c.loc_no='store'
+and d.dept_no=dpt.dept_no and dpt.dply_seq is NOT NULL and dpt.div_no='Division' and dpt.div_no='Division') A
+group by A.loc_no,A.loc_nm,A.dply_seq,A.dept_nm order by A.loc_no,A.dply_seq) C
+order by c.dply_seq) y on x.loc_nm=y.loc_nm group by x.loc_nm) sms_hrs, 
+(select f.loc_nm,NVL(ROUND(sum(e.PLN_HOURS_WPS),2),0) as PLN_HRS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+ROUND((sum(nvl(a.TA_PLN_WAGE_AMT,0)) + sum(nvl(a.WAGE_ADJ_AMT,0))),0) as PLN_WAGE_WPS,
+ROUND((sum(nvl(a.TA_PLN_HRS,0)) + sum(nvl(a.WAGE_ADJ_HRS,0))),0) as PLN_HOURS_WPS
+from ww_wlp.wky_dept_pln a,wk b,loc c,dept d
+where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on e.loc_nm=f.loc_nm group by f.loc_nm) pln_hrs 
+where sms_hrs.loc_nm=pln_hrs.loc_nm]]>
+	</PlannedOR>
+	
+	<BudgetOR>
+	<![CDATA[  select f.loc_nm,
+	case when NVL(sum(e.BDGT_SMS_WPS),0)=0 and NVL(sum(e.BDGT_HRS_WPS),0)=0 then 0 
+	when NVL(sum(e.BDGT_SMS_WPS),0)=0 then 0 when NVL(sum(e.BDGT_HRS_WPS),0)=0 then 0 
+		else NVL(ROUND((sum(e.BDGT_SMS_WPS) / sum(e.BDGT_HRS_WPS)) * 100,2),0) end as BDGT_OR_TOT_WPS from 
+	(select loc_nm from loc where loc_no='store') f
+	LEFT OUTER JOIN
+	(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+	NVL(sum(a.bdgt_sms_hrs),0) as BDGT_SMS_WPS,NVL(sum(a.bdgt_hrs),0) as BDGT_HRS_WPS
+	from ww_wlp.wky_bdgt a,wk b,loc c,dept d
+	where a.wk_id=b.wk_id and b.fin_wk_no='FinWk' and b.fin_yr='FinYear'
+	and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+	and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+	group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+	order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+	on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</BudgetOR>
+	<ForecastORLonglife>
+	<![CDATA[select sms_hrs.loc_nm,
+	CASE When sms_hrs.SMS_HRS_TOT_WPS=0 and pln_hrs.PLN_HRS_TOT_WPS=0 Then 0 
+	When sms_hrs.SMS_HRS_TOT_WPS=0 Then 0 When pln_hrs.PLN_HRS_TOT_WPS=0 Then 0 
+	ELSE ROUND((sms_hrs.SMS_HRS_TOT_WPS / pln_hrs.PLN_HRS_TOT_WPS),2) END as FCST_OR_TOT_WPS from 
+	(select x.loc_nm,NVL(y.SMS_HOURS_TOT_WPS,0) as SMS_HRS_TOT_WPS from 
+	(select loc_no,loc_nm from loc where loc_no='store') x
+	LEFT OUTER JOIN
+	(select z.loc_no,sum(SMS_HOURS_WPS) as SMS_HOURS_TOT_WPS from 
+	(select C.loc_no,C.dept_nm,NVL(((ROUND((((C.FIX_HRS_DEPT_TOT + C.VOL_HRS_DEPT_TOT)*100)/25),0)*25)/100),0) as SMS_HOURS_WPS from 
+	(select A.loc_no,A.loc_nm,A.dept_nm,A.dply_seq,sum(fix_hrs) as FIX_HRS_DEPT_TOT,Sum(vol_hrs) as VOL_HRS_DEPT_TOT from 
+	(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,B.PERD_DESC,a.wk_id,d.dept_no,dpt.dply_seq,dpt.dept_nm,a.task_no,
+	nvl(a.fix_hrs,0) as fix_hrs,NVL(a.vol_hrs,0) as vol_hrs 
+	from ww_wlp.lbr_std a, ww_wlp.wk b, ww_wlp.loc c, ww_wlp.task d, ww_wlp.dept dpt
+	where a.task_no=d.task_no and a.wk_id=b.wk_id and a.loc_no=c.loc_no 
+	and d.dept_no IN (Department) and b.fin_wk_no in ('FinWk') and b.fin_yr in ('FinYear') and c.div_no='Division' and c.loc_no='store'
+	and d.dept_no=dpt.dept_no and dpt.dply_seq is NOT NULL and dpt.div_no='Division') A
+	group by A.loc_no,A.loc_nm,A.dply_seq,A.dept_nm order by A.loc_no,A.dply_seq) C
+	order by c.dply_seq) z
+	group by z.loc_no order by z.loc_no) y
+	on x.loc_no=y.loc_no order by x.loc_no) sms_hrs, 
+	(select f.loc_nm,NVL(ROUND(sum(e.PLN_HOURS_WPS),0),0) as PLN_HRS_TOT_WPS from 
+	(select loc_nm from loc where loc_no='store') f
+	LEFT OUTER JOIN
+	(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+	ROUND((sum(nvl(a.PLAN_PAID_HOURS,0))),0) as PLN_HOURS_WPS
+	from ww_wlp.mnth_fcst a,wk b,loc c,dept d
+	where a.wk_id=b.wk_id and b.fin_wk_no='FinWk' and b.fin_yr='FinYear'
+	and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+	and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+	group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+	order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+	on e.loc_nm=f.loc_nm group by f.loc_nm) pln_hrs 
+	where sms_hrs.loc_nm=pln_hrs.loc_nm]]>
+	</ForecastORLonglife>
+	
+	<ForecastOR>
+	<![CDATA[select f.dept_nm,NVL((ROUND(e.or_prcnt,2)),0) as FCST_OR_WPS from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where div_no='Division' and dept_no IN (Department) and dply_seq is not null and div_no='Division' order by dply_seq) f
+LEFT OUTER JOIN
+(select dept_no,or_prcnt from mnth_fcst where div_no='Division' and loc_no='store '
+and wk_id in (select wk_id from wk where fin_wk_no='FinWk' and fin_yr='FinYear') and dept_no IN (Department)
+order by dept_no) e
+on f.dept_no=e.dept_no order by f.dply_seq]]>
+	</ForecastOR>
+<LastYearSales>
+	<![CDATA[select lc.dept_nm,NVL(sls.wtd,0) as LY_SLS_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department) order by dply_seq) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.ACTL_SLS_DTS),0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTS,sum(e.actl_itm_cnt) as ACTL_ITM_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='LYWk'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+and a.actl_sls is NOT NULL and a.actl_sls!=0
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) f) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq order by lc.dply_seq]]>
+	</LastYearSales>
+	<LastYearWages>
+	<![CDATA[select z.dept_nm,NVL(ROUND(y.ACTL_WGE_DTSS,0),0) as LY_WGE_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select * from 
+(select e.dply_seq,sum(e.actl_amt) as ACTL_WGE_DTSS,sum(e.actl_hrs) as ACTL_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,a.wk_id,
+nvl(a.actl_wage_amt,0) as actl_amt,nvl(a.actl_hrs,0) as actl_hrs
+from ww_wlp.actl_wky_wage a, loc b, wk c , dept d
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and a.loc_no='store' 
+and a.dept_no IN (Department) and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null
+and a.wk_id='LYWk' and a.wk_id=c.wk_id
+/*and a.actl_amt is NOT NULL and a.actl_amt!=0*/
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,a.wk_id) e
+group by e.dply_seq order by e.dply_seq) f) y
+on z.dply_seq=y.dply_seq order by z.dply_seq]]>
+	</LastYearWages>
+	<LastYearWageper>
+	<![CDATA[select actl_wge_ly.dept_nm,
+	CASE When actl_wge_ly.LY_WGE_WKTOT_WDP=0 and actl_sls_ly.LY_SLS_WKTOT_WDP=0 Then 0 
+	When actl_wge_ly.LY_WGE_WKTOT_WDP=0 Then 0 When actl_sls_ly.LY_SLS_WKTOT_WDP=0 Then 0 
+	ELSE ROUND(((actl_wge_ly.LY_WGE_WKTOT_WDP / actl_sls_ly.LY_SLS_WKTOT_WDP))*100,2) END as LY_WGE_PCT_WKTOT_WDP from 
+(select z.dept_nm,NVL(ROUND(y.ACTL_WGE_DTSS,0),0) as LY_WGE_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select * from 
+(select e.dply_seq,sum(e.actl_amt) as ACTL_WGE_DTSS,sum(e.actl_hrs) as ACTL_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,a.wk_id,
+nvl(a.actl_wage_amt,0) as actl_amt,nvl(a.actl_hrs,0) as actl_hrs
+from ww_wlp.actl_wky_wage a, loc b, wk c , dept d
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and a.loc_no='store' 
+and a.dept_no IN (Department) and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null
+and a.wk_id='LYWk' and a.wk_id=c.wk_id
+/*and a.actl_amt is NOT NULL and a.actl_amt!=0*/
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,a.wk_id) e
+group by e.dply_seq order by e.dply_seq) f) y
+on z.dply_seq=y.dply_seq order by z.dply_seq) actl_wge_ly,
+(select lc.dept_nm,NVL(sls.wtd,0) as LY_SLS_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department) order by dply_seq) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.ACTL_SLS_DTS),0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTS,sum(e.actl_itm_cnt) as ACTL_ITM_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='LYWk'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+and a.actl_sls is NOT NULL and a.actl_sls!=0
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) f) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq order by lc.dply_seq) actl_sls_ly
+where actl_wge_ly.dept_nm=actl_sls_ly.dept_nm]]>
+	</LastYearWageper>
+	<LastYearHours>
+	<![CDATA[select z.dept_nm,NVL(ROUND(y.ACTL_HRS_DTSS,2),0) as LY_HRS_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select * from 
+(select e.dply_seq,sum(e.actl_amt) as ACTL_WGE_DTSS,sum(e.actl_hrs) as ACTL_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,a.wk_id,
+nvl(a.actl_wage_amt,0) as actl_amt,nvl(a.actl_hrs,0) as actl_hrs
+from ww_wlp.actl_wky_wage a, loc b, wk c , dept d
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and a.loc_no='store' 
+and a.dept_no IN (Department) and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null
+and a.wk_id='LYWk' and a.wk_id=c.wk_id
+/*and a.actl_amt is NOT NULL and a.actl_amt!=0*/
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,a.wk_id) e
+group by e.dply_seq order by e.dply_seq) f) y
+on z.dply_seq=y.dply_seq order by z.dply_seq]]>
+	</LastYearHours>
+<LastYearORPer>
+	<![CDATA[select sms.dept_nm,
+case when NVL(sms.wtd,0)=0 and NVL(krn.wtd,0)=0 then 0 when NVL(sms.wtd,0)=0 then 0 when NVL(krn.wtd,0)=0 then 0
+else ROUND((sms.wtd / krn.wtd)*100,1) end as WTD from 
+(select lc.dept_nm,NVL(xy.ACTL_SMS_DTSS,0) as wtd from 
+(select ld.dept_no,dt.dept_nm,dt.dply_seq from dept dt
+inner join loc_dept ld
+on dt.dept_no=ld.dept_no where dply_seq is not null and dt.dept_no in (Department) and loc_no=store 
+group by ld.dept_no,dt.dept_nm,dt.dply_seq  order by dt.dply_seq) lc
+LEFT OUTER JOIN
+(select xyz.dept_nm,sum(xyz.ACTL_SMS_DTSS) as ACTL_SMS_DTSS from 
+(select  dept_nm,Sum(ACTL_SMS_DTSS) as ACTL_SMS_DTSS 
+from 
+(select distinct src.*,
+(CASE
+When task_nm='Major Fill' Then ((((((src.var_per_mtrc_type_cd * NVL(src.itm_cnt,0))/1000)) * src.fix_hrs_pct)/100) + src.fix_hrs)
+when task_nm<>'Major Fill' and dept_no in (5,10,15) Then ((((src.var_per_mtrc_type_cd * NVL(src.itm_cnt,0))/1000))+src.fix_hrs)
+when task_nm<>'Major Fill' and dept_no not in (5,10,15) Then ((((src.var_per_mtrc_type_cd * NVL(src.itm_cnt,0))/1000))+src.fix_hrs)
+END) as ACTL_SMS_DTSS
+from
+(select LL.task_no,LL.task_nm,LL.loc_no,LL.dept_no,LL.dept_nm,LL.wk_id,LL.day_of_wk,LL.FIX_HRS,LL.VAR_PER_MTRC_TYPE_CD,LL.VOL_HRS,LL.FIX_HRS_PCT , LL.txn_dte,
+(case when LL.task_nm = 'Major Fill' then (select sum(actl_itm_cnt) from pln_actl_vw where loc_no=LL.loc_no and dept_no in (5,10,15) and txn_dte between 
+(select wk_strt from wk where fin_yr='LYFinYr' and fin_wk_no='FinWk') and (select wk_end from wk where fin_yr='LYFinYr' and fin_wk_no='FinWk') ) 
+When LL.task_nm <> 'Major Fill' and LL.dept_no in (5,10,15) then (select sum(actl_itm_cnt) from dly_sls where loc_no=LL.loc_no and dept_no in (5,10,15) and txn_dte = LL.txn_dte) 
+When LL.task_nm <> 'Major Fill' and LL.dept_no not in (5,10,15)  then  (select actl_itm_cnt from dly_sls where loc_no=LL.loc_no and dept_no=LL.dept_no and txn_dte = LL.txn_dte) 
+end  ) as itm_cnt
+from 
+(select Y.task_no,Y.task_nm,Y.loc_no,Y.dept_no,Y.dept_nm,Y.wk_id,Y.day_of_wk,Y.FIX_HRS,Y.VAR_PER_MTRC_TYPE_CD,Y.VOL_HRS,Y.FIX_HRS_PCT , 
+ds.actl_itm_cnt,ds.txn_dte as txn_dte
+from
+(select distinct A.task_no,tk.task_nm,A.loc_no, dt.dept_nm,A.wk_id,A.day_of_wk,dy.day_dte,A.FIX_HRS,A.VAR_PER_MTRC_TYPE_CD,A.VOL_HRS,sg.FIX_HRS_PCT , w.wk_strt , w.wk_end ,tk.dept_no,
+decode(A.day_of_wk,0,w.wk_strt,1,w.wk_strt+1,2,w.wk_strt+2,3,w.wk_strt+3,4,w.wk_strt+4,5,w.wk_strt+5,6,w.WK_END) as X
+from
+ww_Wlp.lbr_Std A inner join
+ww_wlp.wk w
+on A.wk_id=w.wk_id inner join
+ww_wlp.task tk
+on A.task_No=tk.task_No inner join
+ww_wlp.loc lc 
+on lc.loc_no=a.loc_no and lc.div_no='Division' 
+left outer join ww_Wlp.fix_hrs_wky_sprd_gbl sg
+on A.loc_No=sg.loc_no
+and A.task_No=sg.task_no
+and A.day_of_Wk=sg.day_of_wk
+inner join dept dt
+on dt.dept_no=tk.dept_no
+inner join loc_dept ld
+on dt.dept_no=ld.dept_no and lc.loc_no=ld.loc_no and dt.div_no = 'Division'
+inner join day dy
+on a.day_of_wk=dy.day_of_wk and dy.wk_id=w.wk_id and dy.day_dte between w.wk_strt and w.wk_end 
+where w.fin_yr='LYFinYr' and w.fin_wk_no='FinWk' and A.loc_no=store
+order by A.task_no,tk.dept_no,dt.dept_nm,a.day_of_wk) Y
+inner join ww_wlp.dly_sls ds
+on Y.loc_No=ds.loc_no and Y.dept_no=ds.dept_no and ds.txn_dte = X 
+order by Y.task_no,Y.dept_no, y.X ) LL
+group by LL.task_nm, LL.task_no, LL.loc_no, LL.dept_no,LL.dept_nm, LL.wk_id, 
+LL.day_of_wk, LL.FIX_HRS, LL.VAR_PER_MTRC_TYPE_CD, LL.VOL_HRS, LL.FIX_HRS_PCT , LL.txn_dte
+order by ll.day_of_wk) src where dept_no in (Department)
+order by src.loc_no,src.dept_no,src.task_no) sms_src
+group by dept_nm) xyz
+group by xyz.dept_nm order by xyz.dept_nm) xy
+on lc.dept_nm=xy.dept_nm order by lc.dply_seq) sms,
+(select z.dept_nm,NVL(ROUND(y.ACTL_HRS_DTSS,2),0) as WTD from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select * from 
+(select e.dply_seq,sum(e.actl_amt) as ACTL_WGE_DTSS,sum(e.actl_hrs) as ACTL_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,a.wk_id,
+nvl(a.actl_wage_amt,0) as actl_amt,nvl(a.actl_hrs,0) as actl_hrs
+from ww_wlp.actl_wky_wage a, loc b, wk c , dept d
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and a.loc_no='store' 
+and a.dept_no IN (Department) and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null
+and a.wk_id='LYWk' and a.wk_id=c.wk_id
+/*and a.actl_amt is NOT NULL and a.actl_amt!=0*/
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,a.wk_id) e
+group by e.dply_seq order by e.dply_seq) f) y
+on z.dply_seq=y.dply_seq order by z.dply_seq) krn
+where sms.dept_nm=krn.dept_nm]]>
+	</LastYearORPer>		
+</TCName>
+
+<TCName name = "SalesHistoryValidation" >
+	<CPH>
+	<![CDATA[select f.loc_nm,NVL(ROUND((sum(e.ACTL_WAGE_WPS) / sum(e.ACTL_HOURS_WPS)),2),0) as ACTL_CPH_TOT_WPS from (select loc_nm from loc where 
+loc_no='store') f LEFT OUTER JOIN (select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+sum(a.actl_wage_amt) as ACTL_WAGE_WPS,sum(a.actl_hrs) as ACTL_HOURS_WPS from ww_wlp.ACTL_WKY_WAGE a,wk b,loc c,dept d where a.wk_id=b.wk_id 
+and b.wk_id='Week' and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store' and a.div_no=d.div_no and a.dept_no=d.dept_no 
+and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department) group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,
+d.dept_nm order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on f.loc_nm=e.loc_nm group by f.loc_nm order by f.loc_nm]]>
+	</CPH>
+	
+	<SalesHistory>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.ACTL_SLS_DTSS,0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+/*UNION
+select * from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) pln_sls where (pln_sls.dply_seq,pln_sls.dept_nm,pln_sls.day_of_wk) NOT IN 
+(select e.dply_seq,e.dept_nm,e.day_of_wk from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id ) e) */ ) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</SalesHistory>
+	
+	<SalesHistoryTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,ROUND((x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun),0) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+/*UNION
+select * from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) pln_sls where (pln_sls.dply_seq,pln_sls.dept_nm,pln_sls.day_of_wk) NOT IN 
+(select e.dply_seq,e.dept_nm,e.day_of_wk from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id ) e)*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</SalesHistoryTotal>
+	
+	<AverageMix>
+	<![CDATA[select 'Avg Dly Mix%' as Tot,y.mon,y.tue,y.wed,y.thu,y.fri,y.sat,y.sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='3' and dept_no IN ('Department')) z
+LEFT OUTER JOIN
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_DLY_MIX_SLS_WDP)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_DLY_MIX_SLS_WDP)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_DLY_MIX_SLS_WDP)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_DLY_MIX_SLS_WDP)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_DLY_MIX_SLS_WDP)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_DLY_MIX_SLS_WDP)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_DLY_MIX_SLS_WDP)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.ACTL_DLY_MIX_SLS_WDP,2) as ACTL_DLY_MIX_SLS_WDP from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.avg_dly_mix_sls) as ACTL_DLY_MIX_SLS_WDP from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,dy.day_of_wk,
+nvl(a.avg_dly_mix_sls,0) as avg_dly_mix_sls,nvl(a.avg_dly_mix_itm_cnt,0) as avg_dly_mix_itm_cnt,nvl(a.avg_dly_mix_cust_cnt,0) as avg_dly_mix_cust_cnt
+from ww_wlp.avg_dly_mix a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department') 
+and a.wk_id=c.wk_id and a.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) y
+on z.dept_nm=y.dept_nm]]>
+	</AverageMix>
+	<AverageGrowthVsLYPer>
+	<![CDATA[select CY.dept_nm,
+CASE When CY.Mon=0 and LY.Mon=0 Then 0 
+	When CY.Mon=0 Then -100 When LY.Mon=0 Then 0 
+	ELSE ROUND(((CY.Mon / LY.Mon)-1)*100,2) END as MON,
+  CASE When CY.Tue=0 and LY.Tue=0 Then 0 
+	When CY.Tue=0 Then -100 When LY.Tue=0 Then 0 
+	ELSE ROUND(((CY.Tue / LY.Tue)-1)*100,2) END as TUE ,
+CASE When CY.Wed=0 and LY.Wed=0 Then 0 
+	When CY.Wed=0 Then -100 When LY.Wed=0 Then 0 
+	ELSE ROUND(((CY.Wed / LY.Wed)-1)*100,2) END as WED,
+CASE When CY.Thu=0 and LY.Thu=0 Then 0 
+	When CY.Thu=0 Then -100 When LY.Thu=0 Then 0 
+	ELSE ROUND(((CY.Thu / LY.Thu)-1)*100,2) END as THU,
+CASE When CY.Fri=0 and LY.Fri=0 Then 0 
+	When CY.Fri=0 Then -100 When LY.Fri=0 Then 0 
+	ELSE ROUND(((CY.Fri / LY.Fri)-1)*100,2) END as FRI,
+CASE When CY.Sat=0 and LY.Sat=0 Then 0 
+	When CY.Sat=0 Then -100 When LY.Sat=0 Then 0 
+	ELSE ROUND(((CY.Sat / LY.Sat)-1)*100,2) END as SAT,
+CASE When CY.Sun=0 and LY.Sun=0 Then 0 
+	When CY.Sun=0 Then -100 When LY.Sun=0 Then 0 
+	ELSE ROUND(((CY.Sun / LY.Sun)-1)*100,2) END as SUN from 
+
+(select z.dept_nm,NVL(y.mon/4,0) as Mon,NVL(y.Tue/4,0) as Tue,NVL(y.Wed/4,0) as Wed,
+NVL(y.Thu/4,0) as Thu,NVL(y.Fri/4,0) as Fri,NVL(y.Sat/4,0) as Sat,NVL(y.sun/4,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.ACTL_SLS_DTSS,0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='3' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and c.wk_id between 'WEEK1' and 'WEEK4'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+ ) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) CY,
+(select z.dept_nm,NVL(y.mon/4,0) as Mon,NVL(y.Tue/4,0) as Tue,NVL(y.Wed/4,0) as Wed,
+NVL(y.Thu/4,0) as Thu,NVL(y.Fri/4,0) as Fri,NVL(y.Sat/4,0) as Sat,NVL(y.sun/4,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.ACTL_SLS_DTSS,0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='3' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and  c.wk_id between 'LYWK1' and 'LYWK4'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division' 
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+ ) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq)LY
+WHERE LY.dept_nm = CY.dept_nm 
+]]>
+	</AverageGrowthVsLYPer>
+</TCName>
+
+<TCName name = "PlanningfortheWeekValidation" >
+	<PlannedSalesSummary>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.PLAN_SALES_WPS),0),0) as PLN_SLS_TOT_WPS from 
+(select loc_nm from loc where loc_no='store') f
+LEFT OUTER JOIN
+(select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) c
+UNION
+select * from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+and a.dept_no NOT IN (select dept_no from
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.mgr_pln_sls),0) as PLAN_SALES_WPS 
+from ww_wlp.mgr_dly_pln a,wk b,loc c,dept d
+where a.mgr_pln_sls_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq))
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,d.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) d) e
+on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</PlannedSalesSummary>
+	
+	<BudgetSalesSummary>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.BDGT_SALES_WPS),0),0) as BDGT_SLS_TOT_WPS from (select loc_nm from loc where loc_no='store') f LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.bdgt_sls),0) as BDGT_SALES_WPS,
+ROUND(sum(a.bdgt_wage_amt),0) as BDGT_WAGE_WPS from ww_wlp.wky_bdgt a,wk b,loc c,dept d where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</BudgetSalesSummary>
+	<ForecastSalesSummary>
+	<![CDATA[select f.loc_nm,NVL(ROUND(sum(e.FCST_SALES_WPS),0),0) as FCST_SLS_TOT_WPS from (select loc_nm from loc where loc_no='store') f LEFT OUTER JOIN
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,ROUND(sum(a.frcst_sls),0) as FCST_SALES_WPS,
+ROUND(sum(a.frcst_wage_amt),0) as FCST_WAGE_WPS from ww_wlp.MNTH_FCST a,wk b,loc c,dept d where a.wk_id=b.wk_id and b.wk_id='Week'
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e on e.loc_nm=f.loc_nm group by f.loc_nm]]>
+	</ForecastSalesSummary>
+	
+	<CPH>
+	<![CDATA[select f.loc_nm,NVL(ROUND((sum(e.ACTL_WAGE_WPS) / sum(e.ACTL_HOURS_WPS)),2),0) as ACTL_CPH_TOT_WPS from (select loc_nm from loc where 
+loc_no='store') f LEFT OUTER JOIN (select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,
+sum(a.actl_wage_amt) as ACTL_WAGE_WPS,sum(a.actl_hrs) as ACTL_HOURS_WPS from ww_wlp.ACTL_WKY_WAGE a,wk b,loc c,dept d where a.wk_id=b.wk_id 
+and b.wk_id='Week' and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store' and a.div_no=d.div_no and a.dept_no=d.dept_no 
+and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department) group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,
+d.dept_nm order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq) e
+on f.loc_nm=e.loc_nm group by f.loc_nm order by f.loc_nm]]>
+	</CPH>
+	
+	<SalesHistory>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.ACTL_SLS_DTSS,0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and sysdate-1 and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) pln_sls where (pln_sls.dply_seq,pln_sls.dept_nm,pln_sls.day_of_wk) NOT IN 
+(select e.dply_seq,e.dept_nm,e.day_of_wk from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and sysdate-1 and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id ) e)) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</SalesHistory>
+	
+	<SalesHistoryTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,ROUND((x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun),0) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.ACTL_SLS_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTSS,sum(e.actl_itm_cnt) as ACTL_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) pln_sls where (pln_sls.dply_seq,pln_sls.dept_nm,pln_sls.day_of_wk) NOT IN 
+(select e.dply_seq,e.dept_nm,e.day_of_wk from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id ) e)) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</SalesHistoryTotal>
+	
+	<AverageMix>
+	<![CDATA[]]>
+	</AverageMix>
+	
+	<LastYearSales>
+	<![CDATA[select lc.dept_nm,NVL(sls.mon,0) as Mon,NVL(sls.tue,0) as Tue,NVL(sls.wed,0) as Wed,NVL(sls.thu,0) as Thu,
+NVL(sls.fri,0) as Fri,NVL(sls.sat,0) as Sat,NVL(sls.sun,0) as Sun from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.ACTL_SLS_DTS),0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTS,sum(e.actl_itm_cnt) as ACTL_ITM_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='LYWk'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+and a.actl_sls is NOT NULL and a.actl_sls!=0
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) f) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq order by lc.dply_seq]]>
+	</LastYearSales>
+	<LastYearSalesTotal>
+	<![CDATA[select lc.dept_nm,NVL(sls.wtd,0) as LY_SLS_WKTOT_WDP from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department) order by dply_seq) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.ACTL_SLS_DTS),0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTS,sum(e.actl_itm_cnt) as ACTL_ITM_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='LYWk'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+and a.actl_sls is NOT NULL and a.actl_sls!=0
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) f) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq order by lc.dply_seq]]>
+	</LastYearSalesTotal>
+	<GeneratedSales>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no= 3 and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_SLS_WPS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_SLS_WPS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_SLS_WPS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_SLS_WPS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_SLS_WPS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_SLS_WPS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_SLS_WPS)),0) Sun from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.GEN_SALES_WPS),0) as GEN_SLS_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no= 3 and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedSales>
+	<GeneratedSalesTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as wtd from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_SLS_WPS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_SLS_WPS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_SLS_WPS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_SLS_WPS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_SLS_WPS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_SLS_WPS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_SLS_WPS)),0) Sun from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.GEN_SALES_WPS),0) as GEN_SLS_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedSalesTotal>
+	
+	<PlannedSales>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.PLN_SLS_DTSS,0) as PLN_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</PlannedSales>
+	<PlannedSalesTotal>
+	<![CDATA[select lc.loc_nm,NVL(sls.wtd,0) as WTD from 
+(select b.loc_no,b.loc_nm from loc b where b.loc_no='store') lc
+LEFT OUTER JOIN
+(select z.loc_no,z.wtd from 
+(select x.*,ROUND((x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun),0) as WTD from 
+(select b.loc_no,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun from 
+(select h.loc_no,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,sum(h.PLN_SLS_DTSS) as PLN_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) g) sec_prty*/) h group by h.loc_no,h.day_of_wk order by h.loc_no,h.day_of_wk) b
+group by b.loc_no order by b.loc_no) x ) z) sls
+on lc.loc_no=sls.loc_no]]>
+	</PlannedSalesTotal>
+	<PlannedSalesVSLYPer>
+	<![CDATA[select pln_sls_cy.dept_nm,
+	CASE When pln_sls_cy.mon=0 and actl_sls_ly.mon=0 Then 0 
+	When pln_sls_cy.mon=0 Then -100 When actl_sls_ly.mon=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.mon / actl_sls_ly.mon)-1)*100,2) END as MON,
+	CASE When pln_sls_cy.tue=0 and actl_sls_ly.tue=0 Then 0 
+	When pln_sls_cy.tue=0 Then -100 When actl_sls_ly.tue=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.tue / actl_sls_ly.tue)-1)*100,2) END as TUE, 
+	CASE When pln_sls_cy.wed=0 and actl_sls_ly.wed=0 Then 0 
+	When pln_sls_cy.wed=0 Then -100 When actl_sls_ly.wed=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.wed / actl_sls_ly.wed)-1)*100,2) END as WED, 
+	CASE When pln_sls_cy.thu=0 and actl_sls_ly.thu=0 Then 0 
+	When pln_sls_cy.thu=0 Then -100 When actl_sls_ly.thu=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.thu / actl_sls_ly.thu)-1)*100,2) END as THU, 
+	CASE When pln_sls_cy.fri=0 and actl_sls_ly.fri=0 Then 0 
+	When pln_sls_cy.fri=0 Then -100 When actl_sls_ly.fri=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.fri / actl_sls_ly.fri)-1)*100,2) END as FRI, 
+	CASE When pln_sls_cy.sat=0 and actl_sls_ly.sat=0 Then 0 
+	When pln_sls_cy.sat=0 Then -100 When actl_sls_ly.sat=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.sat / actl_sls_ly.sat)-1)*100,2) END as SAT, 
+	CASE When pln_sls_cy.sun=0 and actl_sls_ly.sun=0 Then 0 
+	When pln_sls_cy.sun=0 Then -100 When actl_sls_ly.sun=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.sun / actl_sls_ly.sun)-1)*100,2) END as SUN from 
+(select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+	NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+	(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq  is not null and div_no='Division' and dept_no in (Department)) z
+	LEFT OUTER JOIN
+	(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+	(select b.dply_seq,b.dept_nm,
+	NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTS)),0) Mon,
+	NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTS)),0) Tue,
+	NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTS)),0) Wed,
+	NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTS)),0) Thu,
+	NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTS)),0) Fri,
+	NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTS)),0) Sat,
+	NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTS)),0) Sun from 
+	(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTS from 
+	(select * from 
+	(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.mgr_pln_sls),0) as PLN_SLS_DTS,ROUND(sum(e.mgr_pln_itm_cnt),0) as PLN_ITM_DTS from 
+	(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+	nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+	from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+	where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no in (Department) 
+	and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+	and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+	and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+	order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+	group by e.dply_seq,e.dept_nm,e.day_of_wk 
+	order by e.dply_seq,e.day_of_wk) f
+	UNION
+	select * from 
+	(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.gnrt_sls),0) as GEN_SLS_DTS,ROUND(sum(e.gnrt_itm),0) as GEN_ITM_DTS from 
+	(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+	nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+	where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no in (Department) 
+	and a.fcst_dte between c.wk_strt and c.wk_end  and c.wk_id='Week'
+	and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+	and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+	where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end  and c.wk_id='Week' and a.loc_no='store')
+	and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+	order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+	group by e.dply_seq,e.dept_nm,e.day_of_wk 
+	order by e.dply_seq,e.day_of_wk) g) h ) b
+	group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+	on z.dept_nm=y.dept_nm order by z.dply_seq) pln_sls_cy,
+(select lc.dept_nm,NVL(sls.mon,0) as Mon,NVL(sls.tue,0) as Tue,NVL(sls.wed,0) as Wed,NVL(sls.thu,0) as Thu,
+NVL(sls.fri,0) as Fri,NVL(sls.sat,0) as Sat,NVL(sls.sun,0) as Sun from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,
+NVL(sum(DECODE(b.dte_of_wk,00,b.ACTL_SLS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.ACTL_SLS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.ACTL_SLS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.ACTL_SLS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.ACTL_SLS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.ACTL_SLS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.ACTL_SLS_DTSS)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.ACTL_SLS_DTS),0) as ACTL_SLS_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.day_of_wk,sum(e.actl_sls) as ACTL_SLS_DTS,sum(e.actl_itm_cnt) as ACTL_ITM_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk,
+nvl(a.actl_sls,0) as actl_sls,nvl(a.actl_itm_cnt,0) as actl_itm_cnt,nvl(a.actl_cust_cnt,0) as actl_cust_cnt
+from ww_wlp.dly_sls a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.txn_dte between c.wk_strt and c.wk_end and c.wk_id='LYWk'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.txn_dte=dy.day_dte and c.wk_id=dy.wk_id 
+and a.actl_sls is NOT NULL and a.actl_sls!=0
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.txn_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) f) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq order by lc.dply_seq) actl_sls_ly
+where pln_sls_cy.dept_nm=actl_sls_ly.dept_nm]]>
+	</PlannedSalesVSLYPer>
+	<PlannedSalesDailyMix>
+	<![CDATA[select pln_sls_cy.dept_nm,
+	CASE When pln_sls_cy.mon=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.mon=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.mon / pln_sls_cy.wtd))*100,2) END as MON,
+	CASE When pln_sls_cy.tue=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.tue=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.tue / pln_sls_cy.wtd))*100,2) END as TUE, 
+	CASE When pln_sls_cy.wed=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.wed=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.wed / pln_sls_cy.wtd))*100,2) END as WED, 
+	CASE When pln_sls_cy.thu=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.thu=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.thu / pln_sls_cy.wtd))*100,2) END as THU, 
+	CASE When pln_sls_cy.fri=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.fri=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.fri / pln_sls_cy.wtd))*100,2) END as FRI, 
+	CASE When pln_sls_cy.sat=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.sat=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.sat / pln_sls_cy.wtd))*100,2) END as SAT, 
+	CASE When pln_sls_cy.sun=0 and pln_sls_cy.wtd=0 Then 0 
+	When pln_sls_cy.sun=0 Then 0 When pln_sls_cy.wtd=0 Then 0 
+	ELSE ROUND(((pln_sls_cy.sun / pln_sls_cy.wtd))*100,2) END as SUN from 
+(select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+	NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun,NVL(y.wtd,0) as Wtd from 
+	(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq  is not null and div_no='Division' and dept_no in (Department)) z
+	LEFT OUTER JOIN
+	(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+	(select b.dply_seq,b.dept_nm,
+	NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTS)),0) Mon,
+	NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTS)),0) Tue,
+	NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTS)),0) Wed,
+	NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTS)),0) Thu,
+	NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTS)),0) Fri,
+	NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTS)),0) Sat,
+	NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTS)),0) Sun from 
+	(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTS from 
+	(select * from 
+	(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.mgr_pln_sls),0) as PLN_SLS_DTS,ROUND(sum(e.mgr_pln_itm_cnt),0) as PLN_ITM_DTS from 
+	(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+	nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+	from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+	where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no in (Department) 
+	and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+	and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+	and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+	order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+	group by e.dply_seq,e.dept_nm,e.day_of_wk 
+	order by e.dply_seq,e.day_of_wk) f
+	UNION
+	select * from 
+	(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.gnrt_sls),0) as GEN_SLS_DTS,ROUND(sum(e.gnrt_itm),0) as GEN_ITM_DTS from 
+	(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+	nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+	where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no in (Department) 
+	and a.fcst_dte between c.wk_strt and c.wk_end  and c.wk_id='Week'
+	and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+	and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+	where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end  and c.wk_id='Week' and a.loc_no='store')
+	and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+	order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+	group by e.dply_seq,e.dept_nm,e.day_of_wk 
+	order by e.dply_seq,e.day_of_wk) g) h ) b
+	group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+	on z.dept_nm=y.dept_nm order by z.dply_seq) pln_sls_cy]]>
+	</PlannedSalesDailyMix>
+	<GeneratedItemPrice>
+	<![CDATA[select z.dept_nm,
+case when NVL(y.mon_sls,0)=0 and NVL(y.mon_itm,0)=0 then 0 
+when NVL(y.mon_sls,0)=0 then 0 when NVL(y.mon_itm,0)=0 then 0 
+else NVL(ROUND((y.mon_sls / y.mon_itm),2),0) end as Mon,
+case when NVL(y.tue_sls,0)=0 and NVL(y.tue_itm,0)=0 then 0 
+when NVL(y.tue_sls,0)=0 then 0 when NVL(y.tue_itm,0)=0 then 0 
+else NVL(ROUND((y.tue_sls / y.tue_itm),2),0) end as Tue,
+case when NVL(y.wed_sls,0)=0 and NVL(y.wed_itm,0)=0 then 0 
+when NVL(y.wed_sls,0)=0 then 0 when NVL(y.wed_itm,0)=0 then 0 
+else NVL(ROUND((y.wed_sls / y.wed_itm),2),0) end as Wed,
+case when NVL(y.thu_sls,0)=0 and NVL(y.thu_itm,0)=0 then 0 
+when NVL(y.thu_sls,0)=0 then 0 when NVL(y.thu_itm,0)=0 then 0 
+else NVL(ROUND((y.thu_sls / y.thu_itm),2),0) end as Thu,
+case when NVL(y.fri_sls,0)=0 and NVL(y.fri_itm,0)=0 then 0 
+when NVL(y.fri_sls,0)=0 then 0 when NVL(y.fri_itm,0)=0 then 0 
+else NVL(ROUND((y.fri_sls / y.fri_itm),2),0) end as Fri,
+case when NVL(y.sat_sls,0)=0 and NVL(y.sat_itm,0)=0 then 0 
+when NVL(y.sat_sls,0)=0 then 0 when NVL(y.sat_itm,0)=0 then 0 
+else NVL(ROUND((y.sat_sls / y.sat_itm),2),0) end as Sat,
+case when NVL(y.mon_sls,0)=0 and NVL(y.mon_itm,0)=0 then 0 
+when NVL(y.sun_sls,0)=0 then 0 when NVL(y.sun_itm,0)=0 then 0 
+else NVL(ROUND((y.sun_sls / y.sun_itm),2),0) end as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_SLS_WPS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_SLS_WPS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_SLS_WPS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_SLS_WPS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_SLS_WPS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_SLS_WPS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_SLS_WPS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_ITM_WPS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_ITM_WPS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_ITM_WPS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_ITM_WPS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_ITM_WPS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_ITM_WPS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_ITM_WPS)),0) Sun_itm from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,sum(h.GEN_SALES_WPS) as GEN_SLS_WPS,sum(h.GEN_ITEM_WPS) as GEN_ITM_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedItemPrice>
+	<GeneratedItemPriceTotal>
+	<![CDATA[select z.dept_nm,NVL(ROUND((y.wtd_sls / y.wtd_itm),2),0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_SLS_WPS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_SLS_WPS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_SLS_WPS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_SLS_WPS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_SLS_WPS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_SLS_WPS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_SLS_WPS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_ITM_WPS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_ITM_WPS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_ITM_WPS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_ITM_WPS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_ITM_WPS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_ITM_WPS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_ITM_WPS)),0) Sun_itm from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,sum(h.GEN_SALES_WPS) as GEN_SLS_WPS,sum(h.GEN_ITEM_WPS) as GEN_ITM_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedItemPriceTotal>
+	
+	<PlannedItemPrice>
+	<![CDATA[select z.dept_nm,
+case when NVL(y.mon_sls,0)=0 and NVL(y.mon_itm,0)=0 then 0 
+when NVL(y.mon_sls,0)=0 then 0 when NVL(y.mon_itm,0)=0 then 0 
+else NVL(ROUND((y.mon_sls / y.mon_itm),2),0) end as Mon,
+case when NVL(y.tue_sls,0)=0 and NVL(y.tue_itm,0)=0 then 0 
+when NVL(y.tue_sls,0)=0 then 0 when NVL(y.tue_itm,0)=0 then 0 
+else NVL(ROUND((y.tue_sls / y.tue_itm),2),0) end as Tue,
+case when NVL(y.wed_sls,0)=0 and NVL(y.wed_itm,0)=0 then 0 
+when NVL(y.wed_sls,0)=0 then 0 when NVL(y.wed_itm,0)=0 then 0 
+else NVL(ROUND((y.wed_sls / y.wed_itm),2),0) end as Wed,
+case when NVL(y.thu_sls,0)=0 and NVL(y.thu_itm,0)=0 then 0 
+when NVL(y.thu_sls,0)=0 then 0 when NVL(y.thu_itm,0)=0 then 0 
+else NVL(ROUND((y.thu_sls / y.thu_itm),2),0) end as Thu,
+case when NVL(y.fri_sls,0)=0 and NVL(y.fri_itm,0)=0 then 0 
+when NVL(y.fri_sls,0)=0 then 0 when NVL(y.fri_itm,0)=0 then 0 
+else NVL(ROUND((y.fri_sls / y.fri_itm),2),0) end as Fri,
+case when NVL(y.sat_sls,0)=0 and NVL(y.sat_itm,0)=0 then 0 
+when NVL(y.sat_sls,0)=0 then 0 when NVL(y.sat_itm,0)=0 then 0 
+else NVL(ROUND((y.sat_sls / y.sat_itm),2),0) end as Sat,
+case when NVL(y.mon_sls,0)=0 and NVL(y.mon_itm,0)=0 then 0 
+when NVL(y.sun_sls,0)=0 then 0 when NVL(y.sun_itm,0)=0 then 0 
+else NVL(ROUND((y.sun_sls / y.sun_itm),2),0) end as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun_itm from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTSS,h.PLN_ITM_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by  e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</PlannedItemPrice>
+	<PlannedItemPriceTotal>
+	<![CDATA[select z.dept_nm,
+case when NVL(y.wtd_sls,0)=0 and NVL(y.wtd_itm,0)=0 then 0 
+when NVL(y.wtd_sls,0)=0 then 0 when NVL(y.wtd_itm,0)=0 then 0 
+else NVL(ROUND((y.wtd_sls / y.wtd_itm),2),0) end as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun_itm from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTSS,h.PLN_ITM_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq ]]>
+	</PlannedItemPriceTotal>
+	
+	<GeneratedItems>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_ITM_WPS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_ITM_WPS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_ITM_WPS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_ITM_WPS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_ITM_WPS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_ITM_WPS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_ITM_WPS)),0) Sun from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.GEN_ITEM_WPS),0) as GEN_ITM_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedItems>
+	<GeneratedItemsTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as wtd from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.GEN_ITM_WPS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.GEN_ITM_WPS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.GEN_ITM_WPS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.GEN_ITM_WPS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.GEN_ITM_WPS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.GEN_ITM_WPS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.GEN_ITM_WPS)),0) Sun from 
+(select h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.GEN_ITEM_WPS),0) as GEN_ITM_WPS from 
+(select c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk,
+ROUND(sum(a.gnrt_sls),0) as GEN_SALES_WPS,ROUND(sum(a.gnrt_itm),0) as GEN_ITEM_WPS,ROUND(sum(a.gnrt_cust),0) as GEN_CUSTM_WPS
+from ww_wlp.fcst a,wk b,loc c,dept d, day dy
+where a.fcst_dte between b.wk_strt and b.wk_end and b.wk_id='Week'
+and a.fcst_dte=dy.day_dte and b.wk_id=dy.wk_id 
+and a.div_no=c.div_no and a.loc_no=c.loc_no and a.div_no='Division' and a.loc_no='store'
+and a.div_no=d.div_no and a.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.dept_no IN (Department)
+group by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,c.loc_nm,a.dept_no,d.dply_seq,d.dept_nm,a.fcst_dte,dy.day_of_wk
+order by c.div_no,c.rgn_no,c.zone_no,c.ar_no,a.loc_no,d.dply_seq,a.fcst_dte,dy.day_of_wk) h 
+group by h.dept_nm,h.day_of_wk order by h.dept_nm,h.day_of_wk) b
+group by b.dept_nm order by b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</GeneratedItemsTotal>
+	
+	<PlannedItems>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.PLN_ITM_DTSS,0) as PLN_ITM_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</PlannedItems>
+	<PlannedItemsTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(h.PLN_ITM_DTSS,0) as PLN_ITM_DTSS from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTSS,sum(e.items) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty*/) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</PlannedItemsTotal>
+	
+	<PlannedCustomer>
+	<![CDATA[select lc.dept_nm,NVL(sls.mon,0) as Mon,NVL(sls.tue,0) as Tue,NVL(sls.wed,0) as Wed,NVL(sls.thu,0) as Thu,
+NVL(sls.fri,0) as Fri,NVL(sls.sat,0) as Sat,NVL(sls.sun,0) as Sun from 
+(select dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN ('Department') order by dply_seq) lc
+LEFT OUTER JOIN
+(select z.dply_seq,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,'Store Total' as STR_TOT,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_CUST_DTSD)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_CUST_DTSD)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_CUST_DTSD)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_CUST_DTSD)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_CUST_DTSD)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_CUST_DTSD)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_CUST_DTSD)),0) Sun from 
+(select h.dply_seq,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_CUST_DTS),0) as PLN_CUST_DTSD from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTS,sum(e.customer) as PLN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTS,sum(e.mgr_pln_CUST_cnt) as PLN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.loc_no,a.dept_no,a.mgr_pln_sls_dte) NOT IN (select a.loc_no,a.dept_no,a.pln_dte from mgr_dly_refcst a, loc b, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTS,sum(e.gnrt_CUST) as GEN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.loc_no,a.dept_no,a.fcst_dte) NOT IN (select a.loc_no,a.dept_no,a.mgr_pln_sls_dte from mgr_dly_pln a, loc b, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and (a.loc_no,a.dept_no,a.fcst_dte) NOT IN (select a.loc_no,a.dept_no,a.pln_dte from mgr_dly_refcst a, loc b, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) g) sec_prty*/) h 
+group by h.dply_seq,h.day_of_wk order by h.dply_seq,h.day_of_wk) b
+group by b.dply_seq order by b.dply_seq) x ) z) sls
+on lc.dply_seq=sls.dply_seq]]>
+	</PlannedCustomer>
+	<PlannedCustomerTotal>
+	<![CDATA[select lc.dept_nm,NVL(rslt.PLN_CUST_TOT_DTSD,0) as PLN_CUST_TOT_DTSD from 
+(select dply_seq,dept_no,dept_nm from dept where dply_seq is not null and div_no='Division' and dept_no IN ('Department') order by dply_seq) lc
+    LEFT OUTER JOIN 
+(select h.dply_seq,ROUND(sum(h.PLN_CUST_DTS),0) as PLN_CUST_TOT_DTSD from 
+(select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.sales) as PLN_SLS_DTS,sum(e.customer) as PLN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk,
+nvl(a.sales,0) as sales,nvl(a.items,0) as items,nvl(a.customer,0) as customer
+from ww_wlp.pln_fcst_cmb_vw a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.proc_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.proc_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.proc_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) pri_prty
+/*UNION
+select * from (select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTS,sum(e.mgr_pln_CUST_cnt) as PLN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.loc_no,a.dept_no,a.mgr_pln_sls_dte) NOT IN (select a.loc_no,a.dept_no,a.pln_dte from mgr_dly_refcst a, loc b, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTS,sum(e.gnrt_CUST) as GEN_CUST_DTS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,b.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN ('Department')
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.loc_no,a.dept_no,a.fcst_dte) NOT IN (select a.loc_no,a.dept_no,a.mgr_pln_sls_dte from mgr_dly_pln a, loc b, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and (a.loc_no,a.dept_no,a.fcst_dte) NOT IN (select a.loc_no,a.dept_no,a.pln_dte from mgr_dly_refcst a, loc b, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' 
+and a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.loc_no,e.dply_seq,e.day_of_wk) g) sec_prty*/) h 
+group by h.dply_seq order by h.dply_seq) rslt
+on lc.dply_seq=rslt.dply_seq order by lc.dply_seq]]>
+	</PlannedCustomerTotal>
+	
+	<WeekType>
+	<![CDATA[]]>
+	</WeekType>
+	
+	<SMSHours>
+	<![CDATA[select lc.loc_nm,NVL(sms.mon,0) as Mon,NVL(sms.tue,0) as Tue,NVL(sms.wed,0) as Wed,NVL(sms.thu,0) as Thu,
+NVL(sms.fri,0) as Fri,NVL(sms.sat,0) as Sat,NVL(sms.sun,0) as Sun from 
+(select distinct loc_nm,'Store Total' as STR_TOT from loc where loc_no='store') lc
+LEFT OUTER JOIN
+(select z.loc_nm,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.loc_nm,'Store Total' as STR_TOT,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_TOT_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_TOT_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_TOT_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_TOT_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_TOT_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_TOT_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_TOT_DTSS)),0) Sun from 
+(select distinct h.loc_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_SMS_DTSS),2) as PLN_SMS_TOT_DTSS from 
+(select distinct e.loc_nm,e.dply_seq,e.dept_nm,e.day_of_wk,(sum(e.fix_hrs) + sum(e.vol_hrs)) as PLN_SMS_DTSS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and a.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.task_no=tsk.task_no 
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.loc_nm,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h group by h.loc_nm,h.day_of_wk order by h.loc_nm,h.day_of_wk) b
+group by b.loc_nm order by b.loc_nm) x ) z ) sms
+on sms.loc_nm=lc.loc_nm]]>
+	</SMSHours>
+	<SMSHoursTotal>
+	<![CDATA[select z.dept_nm,NVL(y.wtd,0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department) and div_no='Division') z
+LEFT OUTER JOIN
+(select x.*,ROUND((x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun),2) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_DTSS)),0) Sun from 
+(select distinct h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SMS_DTSS from 
+(select distinct e.dply_seq,e.dept_nm,e.day_of_wk,(sum(e.fix_hrs) + sum(e.vol_hrs)) as PLN_SMS_DTSS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and a.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and dy.day_dte between c.wk_strt and c.wk_end
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.task_no=tsk.task_no
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</SMSHoursTotal>
+	
+	<KronosHours>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_HRS_DTSS from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.ta_pln_wage_amt),0) as PLN_WGE_DTSS,ROUND(sum(e.ta_pln_hrs),2) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</KronosHours>
+	<KronosHoursHours>
+	<![CDATA[select lc.loc_nm,WTD from 
+(select b.loc_no,b.loc_nm from loc b where b.loc_no='store' order by b.loc_no) lc
+LEFT OUTER JOIN
+(select z.loc_no, WTD from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.loc_no,'store Total' as STR_TOT,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_TOT_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_TOT_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_TOT_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_TOT_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_TOT_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_TOT_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_TOT_DTSS)),0) Sun from 
+(select h.loc_no,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_HRS_DTSS),2) as PLN_HRS_TOT_DTSS from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.ta_pln_wage_amt) as PLN_WGE_DTSS,sum(e.ta_pln_hrs) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and  d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) h 
+group by h.loc_no,h.day_of_wk order by h.loc_no,h.day_of_wk) b
+group by b.loc_no order by b.loc_no) x ) z) wge
+on wge.loc_no=lc.loc_no]]>
+	</KronosHoursHours>
+	
+	<PlanVariance>
+	<![CDATA[select Hours.dept_nm,ROUND((Hours.mon - SMS.mon),2) as mon,ROUND((Hours.Tue - SMS.Tue),2) as Tue,ROUND((Hours.Wed - SMS.Wed),2) as Wed,
+ROUND((Hours.Thu - SMS.Thu),2) as Thu,ROUND((Hours.Fri - SMS.Fri),2) as Fri,ROUND((Hours.Sat - SMS.Sat),2) as Sat,
+ROUND((Hours.Sun - SMS.Sun),2) as Sun from 
+(select lc.loc_nm,NVL(sms.mon,0) as Mon,NVL(sms.tue,0) as Tue,NVL(sms.wed,0) as Wed,NVL(sms.thu,0) as Thu,
+NVL(sms.fri,0) as Fri,NVL(sms.sat,0) as Sat,NVL(sms.sun,0) as Sun from 
+(select distinct loc_nm,'Store Total' as STR_TOT from loc where loc_no='store') lc
+LEFT OUTER JOIN
+(select z.loc_nm,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as PLND_SMS from 
+(select b.loc_nm,'Store Total' as STR_TOT,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_TOT_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_TOT_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_TOT_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_TOT_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_TOT_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_TOT_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_TOT_DTSS)),0) Sun from 
+(select distinct h.loc_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_SMS_DTSS),2) as PLN_SMS_TOT_DTSS from 
+(select distinct e.loc_nm,e.dply_seq,e.dept_nm,e.day_of_wk,(sum(e.fix_hrs) + sum(e.vol_hrs)) as PLN_SMS_DTSS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and a.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.task_no=tsk.task_no 
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.loc_nm,e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h group by h.loc_nm,h.day_of_wk order by h.loc_nm,h.day_of_wk) b
+group by b.loc_nm order by b.loc_nm) x ) z ) sms
+on sms.loc_nm=lc.loc_nm) SMS,
+(select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as PLND_HRS from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_HRS_DTSS from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.ta_pln_wage_amt),0) as PLN_WGE_DTSS,ROUND(sum(e.ta_pln_hrs),2) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) Hours
+where Hours.dept_nm=Hours.dept_nm]]>
+	</PlanVariance>
+	<PlanVarianceTotal>
+	<![CDATA[select Hours.loc_nm,ROUND((Hours.PLN_HRS_TOT_DTSS - SMS.WTD),2) as Total from 
+(select lc.loc_nm,sms.wtd from 
+(select distinct b.loc_no,b.loc_nm from loc b where b.loc_no='store' order by b.loc_no) lc
+LEFT OUTER JOIN
+(select z.loc_no,z.wtd from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.loc_no,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_TOT_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_TOT_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_TOT_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_TOT_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_TOT_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_TOT_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_TOT_DTSS)),0) Sun from 
+(select distinct h.loc_no,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_SMS_DTS),2) as PLN_SMS_TOT_DTSS from 
+(select distinct e.loc_no,e.dply_seq,e.day_of_wk,(sum(e.fix_hrs) + sum(e.vol_hrs)) as PLN_SMS_DTS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and b.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and dy.day_dte between c.wk_strt and c.wk_end
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and  d.div_no='Division' and a.task_no=tsk.task_no 
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.loc_no,e.dply_seq,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) h 
+group by h.loc_no,h.day_of_wk order by h.loc_no,h.day_of_wk) b
+group by b.loc_no order by b.loc_no) x ) z ) sms
+on sms.loc_no=lc.loc_no) SMS,
+(select lc.loc_nm,PLN_HRS_TOT_DTSS from 
+(select b.loc_no,b.loc_nm from loc b where b.loc_no='store' order by b.loc_no) lc
+LEFT OUTER JOIN
+(select z.loc_no, PLN_HRS_TOT_DTSS from 
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as PLN_HRS_TOT_DTSS from 
+(select b.loc_no,'store Total' as STR_TOT,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_TOT_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_TOT_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_TOT_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_TOT_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_TOT_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_TOT_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_TOT_DTSS)),0) Sun from 
+(select h.loc_no,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,ROUND(sum(h.PLN_HRS_DTSS),2) as PLN_HRS_TOT_DTSS from 
+(select e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.ta_pln_wage_amt) as PLN_WGE_DTSS,sum(e.ta_pln_hrs) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,b.loc_nm,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and  d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.loc_no,e.dply_seq,e.dept_nm,e.day_of_wk order by e.loc_no,e.dply_seq,e.day_of_wk) h 
+group by h.loc_no,h.day_of_wk order by h.loc_no,h.day_of_wk) b
+group by b.loc_no order by b.loc_no) x ) z) wge
+on wge.loc_no=lc.loc_no) Hours
+where SMS.loc_nm=Hours.loc_nm]]>
+	</PlanVarianceTotal>
+	
+	<OperationalRatio>
+	<![CDATA[select sms.dept_nm,NVL(ROUND((sms.mon / hrs.mon)*100,1),0) as Mon,NVL(ROUND((sms.tue / hrs.tue)*100,1),0) as Tue,NVL(ROUND((sms.wed / hrs.wed)*100,1),0) as Wed,
+NVL(ROUND((sms.thu / hrs.thu)*100,1),0) as Thu,NVL(ROUND((sms.fri / hrs.fri)*100,1),0) as Fri,NVL(ROUND((sms.sat / hrs.sat)*100,1),0) as Sat,
+NVL(ROUND((sms.sun / hrs.sun)*100,1),0) as Sun from
+(select z.dept_nm,y.mon,y.Tue,y.Wed,y.Thu,y.Fri,y.Sat,y.Sun,y.wtd from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_DTSS)) Mon,
+sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_DTSS)) Tue,
+sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_DTSS)) Wed,
+sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_DTSS)) Thu,
+sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_DTSS)) Fri,
+sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_DTSS)) Sat,
+sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_DTSS)) Sun from 
+(select distinct h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SMS_DTSS from 
+(select distinct e.dply_seq,e.dept_nm,e.day_of_wk,(sum(e.fix_hrs) + sum(e.vol_hrs)) as PLN_SMS_DTSS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and a.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.task_no=tsk.task_no 
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) sms,
+(select z.dept_nm,y.mon,y.Tue,y.Wed,y.Thu,y.Fri,y.Sat,y.Sun,y.wtd from  
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_DTSS)) Mon,
+sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_DTSS)) Tue,
+sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_DTSS)) Wed,
+sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_DTSS)) Thu,
+sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_DTSS)) Fri,
+sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_DTSS)) Sat,
+sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_DTSS)) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_HRS_DTSS from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.ta_pln_wage_amt) as PLN_WGE_DTSS,sum(e.ta_pln_hrs) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) hrs
+where sms.dept_nm=hrs.dept_nm]]>
+	</OperationalRatio>
+	<OperationalRatioTotal>
+	<![CDATA[select sms.dept_nm,NVL(ROUND((sms.PLN_SMS_DTSS / hrs.PLN_HRS_DTSS)*100,2),0) as PLN_OR_PRCNT_DTSS from
+(select z.dept_nm,y.WTD as PLN_SMS_DTSS from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+sum(DECODE(b.dte_of_wk,00,b.PLN_SMS_DTSS)) Mon,
+sum(DECODE(b.dte_of_wk,01,b.PLN_SMS_DTSS)) Tue,
+sum(DECODE(b.dte_of_wk,02,b.PLN_SMS_DTSS)) Wed,
+sum(DECODE(b.dte_of_wk,03,b.PLN_SMS_DTSS)) Thu,
+sum(DECODE(b.dte_of_wk,04,b.PLN_SMS_DTSS)) Fri,
+sum(DECODE(b.dte_of_wk,05,b.PLN_SMS_DTSS)) Sat,
+sum(DECODE(b.dte_of_wk,06,b.PLN_SMS_DTSS)) Sun from 
+(select distinct h.dply_seq,h.dept_nm,round(SUBSTR(h.day_of_wk,0,2),2) as dte_of_wk,h.PLN_SMS_DTSS from 
+(select distinct e.dply_seq,e.dept_nm,e.day_of_wk,round((sum(e.fix_hrs) + sum(e.vol_hrs)),2) as PLN_SMS_DTSS from 
+(select distinct b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte,
+nvl(a.fix_hrs,0) as fix_hrs,nvl(a.vol_hrs,0) as vol_hrs from ww_wlp.lbr_std a, loc b, wk c , dept d, task tsk, day dy
+where a.loc_no=b.loc_no and b.div_no='Division' and a.loc_no='store' and tsk.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and dy.day_dte between c.wk_strt and c.wk_end
+and tsk.dept_no=d.dept_no and d.dply_seq is not null and d.div_no='Division' and a.task_no=tsk.task_no
+and a.wk_id=dy.wk_id and a.day_of_wk=dy.day_of_wk and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.day_of_wk,dy.day_dte) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) sms,
+(select z.dept_nm,y.PLN_HRS_DTSS from  
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as PLN_HRS_DTSS from 
+(select b.dply_seq,b.dept_nm,
+nvl(sum(DECODE(b.dte_of_wk,00,b.PLN_HRS_DTSS)),0) Mon,
+nvl(sum(DECODE(b.dte_of_wk,01,b.PLN_HRS_DTSS)),0) Tue,
+nvl(sum(DECODE(b.dte_of_wk,02,b.PLN_HRS_DTSS)),0) Wed,
+nvl(sum(DECODE(b.dte_of_wk,03,b.PLN_HRS_DTSS)),0) Thu,
+nvl(sum(DECODE(b.dte_of_wk,04,b.PLN_HRS_DTSS)),0) Fri,
+nvl(sum(DECODE(b.dte_of_wk,05,b.PLN_HRS_DTSS)),0) Sat,
+nvl(sum(DECODE(b.dte_of_wk,06,b.PLN_HRS_DTSS)),0) Sun from
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_HRS_DTSS from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.ta_pln_wage_amt) as PLN_WGE_DTSS,sum(e.ta_pln_hrs) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq) hrs
+where sms.dept_nm=hrs.dept_nm]]>
+	</OperationalRatioTotal>
+	
+	<WageCost>
+	<![CDATA[select z.dept_nm,NVL(y.mon,0) as Mon,NVL(y.Tue,0) as Tue,NVL(y.Wed,0) as Wed,
+NVL(y.Thu,0) as Thu,NVL(y.Fri,0) as Fri,NVL(y.Sat,0) as Sat,NVL(y.sun,0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon + x.Tue + x.Wed + x.Thu + x.Fri + x.Sat + x.Sun) as WTD from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_WGE_DTSS)),0) Mon,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_WGE_DTSS)),0) Tue,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_WGE_DTSS)),0) Wed,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_WGE_DTSS)),0) Thu,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_WGE_DTSS)),0) Fri,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_WGE_DTSS)),0) Sat,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_WGE_DTSS)),0) Sun from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_WGE_DTSS from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,ROUND(sum(e.ta_pln_wage_amt),2) as PLN_WGE_DTSS,ROUND(sum(e.ta_pln_hrs),0) as PLN_HRS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs
+from ww_wlp.krn_schd a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.dly_wage_dte between c.wk_strt and c.wk_end /*and trunc(sysdate-1)*/ and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.dly_wage_dte=dy.day_dte and c.wk_id=dy.wk_id
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.dly_wage_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</WageCost>
+	<WageCostTotal>
+	<![CDATA[select z.dept_nm,NVL(y.PLN_WAGE_DTSS,0) as PLN_WGE_DTSS from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select e.dply_seq,e.dept_nm,ROUND((sum(e.ta_pln_wage_amt) + sum(e.wage_adj_amt)),0) as PLN_WAGE_DTSS,
+ROUND((sum(e.ta_pln_hrs) + sum(e.wage_adj_hrs)),0) as PLN_HOURS_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,
+nvl(a.ta_pln_wage_amt,0) as ta_pln_wage_amt,nvl(a.wage_adj_amt,0) as wage_adj_amt,nvl(a.ta_pln_hrs,0) as ta_pln_hrs,nvl(a.wage_adj_hrs,0) as wage_adj_hrs 
+from ww_wlp.wky_dept_pln a, loc b, wk c , dept d
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.wk_id=c.wk_id and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id) e
+group by e.dply_seq,e.dept_nm 
+order by e.dply_seq) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</WageCostTotal>
+	
+	
+</TCName>
+
+<TCName name = "PlannedItemPriceValidation" >
+
+<PlannedItemPrice>
+	<![CDATA[select z.dept_nm,NVL(ROUND((y.mon_sls / y.mon_itm),2),0) as Mon,NVL(ROUND((y.tue_sls / y.tue_itm),2),0) as Tue,NVL(ROUND((y.wed_sls / y.wed_itm),2),0) as Wed,
+NVL(ROUND((y.thu_sls / y.thu_itm),2),0) as Thu,NVL(ROUND((y.fri_sls / y.fri_itm),2),0) as Fri,NVL(ROUND((y.sat_sls / y.sat_itm),2),0) as Sat,
+NVL(ROUND((y.sun_sls / y.sun_itm),2),0) as Sun from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun_itm from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTSS,h.PLN_ITM_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq]]>
+	</PlannedItemPrice>
+	<PlannedItemPriceTotal>
+	<![CDATA[select z.dept_nm,NVL(ROUND((y.wtd_sls / y.wtd_itm),2),0) as WTD from 
+(select distinct dept_no,dept_nm,dply_seq from ww_wlp.dept where dply_seq is not null and div_no='Division' and dept_no IN (Department)) z
+LEFT OUTER JOIN
+(select x.*,(x.Mon_sls + x.Tue_sls + x.Wed_sls + x.Thu_sls + x.Fri_sls + x.Sat_sls + x.Sun_sls) as WTD_sls,
+(x.Mon_itm + x.Tue_itm + x.Wed_itm + x.Thu_itm + x.Fri_itm + x.Sat_itm + x.Sun_itm) as WTD_itm from 
+(select b.dply_seq,b.dept_nm,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_SLS_DTSS)),0) Mon_sls,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_SLS_DTSS)),0) Tue_sls,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_SLS_DTSS)),0) Wed_sls,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_SLS_DTSS)),0) Thu_sls,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_SLS_DTSS)),0) Fri_sls,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_SLS_DTSS)),0) Sat_sls,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_SLS_DTSS)),0) Sun_sls,
+NVL(sum(DECODE(b.dte_of_wk,00,b.PLN_ITM_DTSS)),0) Mon_itm,
+NVL(sum(DECODE(b.dte_of_wk,01,b.PLN_ITM_DTSS)),0) Tue_itm,
+NVL(sum(DECODE(b.dte_of_wk,02,b.PLN_ITM_DTSS)),0) Wed_itm,
+NVL(sum(DECODE(b.dte_of_wk,03,b.PLN_ITM_DTSS)),0) Thu_itm,
+NVL(sum(DECODE(b.dte_of_wk,04,b.PLN_ITM_DTSS)),0) Fri_itm,
+NVL(sum(DECODE(b.dte_of_wk,05,b.PLN_ITM_DTSS)),0) Sat_itm,
+NVL(sum(DECODE(b.dte_of_wk,06,b.PLN_ITM_DTSS)),0) Sun_itm from 
+(select h.dply_seq,h.dept_nm,SUBSTR(h.day_of_wk,0,2) as dte_of_wk,h.PLN_SLS_DTSS,h.PLN_ITM_DTSS from 
+(select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.refcst_sls) as PLN_SLS_DTSS,sum(e.refcst_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk,
+nvl(a.refcst_sls,0) as refcst_sls,nvl(a.refcst_itm_cnt,0) as refcst_itm_cnt,nvl(a.refcst_cust_cnt,0) as refcst_cust_cnt
+from ww_wlp.mgr_dly_refcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and a.pln_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.pln_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) pri_prty
+UNION
+select * from (select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.mgr_pln_sls) as PLN_SLS_DTSS,sum(e.mgr_pln_itm_cnt) as PLN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk,
+nvl(a.mgr_pln_sls,0) as mgr_pln_sls,nvl(a.mgr_pln_itm_cnt,0) as mgr_pln_itm_cnt,nvl(a.mgr_pln_cust_cnt,0) as mgr_pln_cust_cnt
+from ww_wlp.mgr_dly_pln a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.mgr_pln_sls_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.mgr_pln_sls_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.mgr_pln_sls_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) f
+UNION
+select * from 
+(select e.dply_seq,e.dept_nm,e.day_of_wk,sum(e.gnrt_sls) as GEN_SLS_DTSS,sum(e.gnrt_itm) as GEN_ITM_DTSS from 
+(select b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,a.dept_no,d.dept_nm,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk,
+nvl(a.gnrt_sls,0) as gnrt_sls,nvl(a.gnrt_itm,0) as gnrt_itm,nvl(a.gnrt_cust,0) as gnrt_cust from ww_wlp.fcst a, loc b, wk c , dept d, day dy
+where a.loc_no=b.loc_no and a.div_no=b.div_no and b.div_no='Division' and b.loc_no='store' and a.dept_no IN (Department) 
+and a.fcst_dte between c.wk_strt and c.wk_end and c.wk_id='Week'
+and a.dept_no=d.dept_no and a.div_no=d.div_no and d.dply_seq is not null and d.div_no='Division'
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,mgr_pln_sls_dte from mgr_dly_pln a, wk c 
+where a.mgr_pln_sls_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and (a.dept_no,a.fcst_dte) NOT IN (select dept_no,pln_dte from mgr_dly_refcst a, wk c 
+where a.pln_dte between c.wk_strt and c.wk_end and c.wk_id='Week' and a.loc_no='store')
+and a.fcst_dte=dy.day_dte and c.wk_id=dy.wk_id 
+order by b.div_no,b.rgn_no,b.zone_no,b.ar_no,a.loc_no,d.dply_seq,c.perd_desc,c.wk_id,a.fcst_dte,dy.day_of_wk) e
+group by e.dply_seq,e.dept_nm,e.day_of_wk 
+order by e.dply_seq,e.day_of_wk) g) sec_prty) h ) b
+group by b.dply_seq,b.dept_nm order by b.dply_seq,b.dept_nm) x ) y
+on z.dept_nm=y.dept_nm order by z.dply_seq ]]>
+	</PlannedItemPriceTotal>
+	</TCName>
+
+</configuration>

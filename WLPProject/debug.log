@@ -1,0 +1,192 @@
+[0331/180053:ERROR:process_info.cc(608)] range at 0xfffde000, size 0x230 fully unreadable
+[0331/180053:ERROR:process_reader_win.cc(141)] SuspendThread: Access is denied. (0x5)
+[0331/180053:ERROR:exception_snapshot_win.cc(57)] thread ID 23812 not found in process
+[0331/180053:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::InitializeException failed
+[0331/180053:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess, ntstatus=-1073741558
+[0601/225534.046:ERROR:process_reader_win.cc(173)] ResumeThread: The parameter is incorrect. (0x57)
+[0601/225534.046:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0601/225534.046:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0601/225534.046:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0601/225534.046:ERROR:process_reader_win.cc(114)] NtOpenThread: An invalid Client ID was specified.  (0xc000000b)
+[0601/225534.046:ERROR:process_reader_win.cc(114)] NtOpenThread: An invalid Client ID was specified.  (0xc000000b)
+[0601/225534.046:ERROR:process_reader_win.cc(142)] SuspendThread: Access is denied. (0x5)
+[0601/225534.077:ERROR:process_reader_win.cc(233)] ReadMemory at 0x222000 of 57344 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0601/225534.077:ERROR:crash_report_exception_handler.cc(111)] WriteEverything failed
+[0601/225534.078:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0910/172844.923:ERROR:process_info.cc(380)] UncheckedAllocate
+[0910/172845.344:ERROR:process_info.cc(380)] UncheckedAllocate
+[0912/134359.913:ERROR:process_info.cc(380)] UncheckedAllocate
+[0912/134614.935:ERROR:process_info.cc(380)] UncheckedAllocate
+[0912/165103.083:ERROR:process_info.cc(380)] UncheckedAllocate
+[0912/171613.902:ERROR:process_info.cc(380)] UncheckedAllocate
+[0921/181820.824:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0921/183519.356:ERROR:file_io_win.cc(164)] CreateFile C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir12144_4250\Crashpad\settings.dat: Error (0x13D) while retrieving error. (0x3)
+[0921/183519.358:ERROR:file_io_win.cc(173)] CreateFile C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir12144_4250\Crashpad\reports\d6392c44-ad5f-4beb-acf7-b3c56bdeea57.dmp: Error (0x13D) while retrieving error. (0x3)
+[0921/183519.358:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
+[0921/185734.193:ERROR:process_info.cc(380)] UncheckedAllocate
+[0921/185736.710:ERROR:process_info.cc(380)] UncheckedAllocate
+[0921/191844.326:ERROR:process_info.cc(380)] UncheckedAllocate
+[1116/170258.032:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0529/202947.486:ERROR:crash_report_database_win.cc(568)] CreateDirectory C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir18096_241\Crashpad: The system cannot find the path specified. (0x3)
+[0529/202947.507:ERROR:crash_report_database_win.cc(568)] CreateDirectory C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir19256_1123\Crashpad: The system cannot find the path specified. (0x3)
+[0529/202947.492:ERROR:crash_report_database_win.cc(568)] CreateDirectory C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir19296_7200\Crashpad: The system cannot find the path specified. (0x3)
+[0529/202947.506:ERROR:crash_report_database_win.cc(568)] CreateDirectory C:\Users\XVKR4~1.NSW\AppData\Local\Temp\scoped_dir12384_30748\Crashpad: The system cannot find the path specified. (0x3)
+[0530/211116.093:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0530/211116.404:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0530/211117.099:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0530/211117.557:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0711/193501.716:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0713/104857.620:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0718/191848.167:ERROR:process_info.cc(118)] ReadProcessMemory bool __cdecl crashpad::`anonymous-namespace'::ReadStruct<struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64>>(void *,unsigned __int64,struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64> *): Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0718/191848.167:ERROR:process_info.cc(566)] ReadProcessData failed
+[0718/191848.167:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fee61b1960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0718/191848.167:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0718/191848.167:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0718/191848.167:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0720/132012.681:ERROR:scoped_process_suspend.cc(31)] NtSuspendProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0720/132012.693:ERROR:process_info.cc(118)] ReadProcessMemory bool __cdecl crashpad::`anonymous-namespace'::ReadStruct<struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64>>(void *,unsigned __int64,struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64> *): Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0720/132012.693:ERROR:process_info.cc(566)] ReadProcessData failed
+[0720/132012.694:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fefaaf1960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0720/132012.694:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0720/132012.694:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0720/133254.473:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0722/105031.302:ERROR:process_info.cc(350)] VirtualQueryEx: Access is denied. (0x5)
+[0722/105031.305:ERROR:process_info.cc(571)] ReadMemoryInfo failed
+[0722/105031.306:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fedced1960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0722/105031.306:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0722/105031.306:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0722/105031.309:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0723/092552.465:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0723/092552.467:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0723/092552.468:ERROR:exception_snapshot_win.cc(87)] thread ID 10964 not found in process
+[0723/092552.468:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0723/112029.663:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0723/112029.664:ERROR:exception_snapshot_win.cc(87)] thread ID 3044 not found in process
+[0723/112029.664:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0723/121750.350:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0723/121750.351:ERROR:exception_snapshot_win.cc(87)] thread ID 10396 not found in process
+[0723/121750.351:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0805/121341.835:ERROR:process_info.cc(118)] ReadProcessMemory bool __cdecl crashpad::`anonymous-namespace'::ReadStruct<struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64>>(void *,unsigned __int64,struct crashpad::process_types::PEB<struct crashpad::process_types::internal::Traits64> *): Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0805/121341.847:ERROR:process_info.cc(566)] ReadProcessData failed
+[0805/121341.847:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fee1041960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0805/121341.847:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0805/121341.847:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0805/121341.849:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0811/094629.671:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0811/094629.675:ERROR:exception_snapshot_win.cc(87)] thread ID 21424 not found in process
+[0811/094629.675:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0811/095027.671:ERROR:process_info.cc(350)] VirtualQueryEx: Access is denied. (0x5)
+[0811/095027.672:ERROR:process_info.cc(571)] ReadMemoryInfo failed
+[0811/095027.672:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fee1041960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0811/095027.672:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0811/095027.672:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0811/095027.672:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0811/115209.351:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0811/115209.352:ERROR:exception_snapshot_win.cc(87)] thread ID 21180 not found in process
+[0811/115209.352:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0811/115209.352:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0813/083843.077:ERROR:process_info.cc(350)] VirtualQueryEx: Access is denied. (0x5)
+[0813/083843.081:ERROR:process_info.cc(571)] ReadMemoryInfo failed
+[0813/083843.081:ERROR:process_reader_win.cc(242)] ReadMemory at 0x7fee1041960 of 12 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0813/083843.082:WARNING:process_snapshot_win.cc(72)] ReadMemory ExceptionInformation failed
+[0813/083843.082:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0813/083843.083:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0813/094321.984:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0813/094321.985:ERROR:exception_snapshot_win.cc(87)] thread ID 14400 not found in process
+[0813/094321.985:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0813/122023.515:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0813/122023.519:ERROR:exception_snapshot_win.cc(87)] thread ID 14372 not found in process
+[0813/122023.520:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0816/062309.618:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/062311.445:ERROR:process_reader_win.cc(242)] ReadMemory at 0x3c3000 of 53248 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0816/062311.446:ERROR:crash_report_exception_handler.cc(116)] WriteEverything failed
+[0816/062311.448:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[0816/062358.598:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/064020.840:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/064133.886:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/064545.985:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/064546.008:ERROR:process_info.cc(380)] UncheckedAllocate
+[0816/065226.498:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0816/065432.396:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0816/065559.470:ERROR:prune_crash_reports.cc(35)] PruneCrashReportDatabase: Failed to get pending reports
+[0816/110251.039:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[0816/110251.051:ERROR:exception_snapshot_win.cc(87)] thread ID 17812 not found in process
+[0816/110251.052:WARNING:crash_report_exception_handler.cc(62)] ProcessSnapshotWin::Initialize failed
+[0816/110251.052:ERROR:scoped_process_suspend.cc(39)] NtResumeProcess: An attempt was made to access an exiting process.  (0xc000010a)
+[1007/080502.605:ERROR:process_reader_win.cc(242)] ReadMemory at 0x332000 of 57344 bytes failed: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[1007/080502.606:ERROR:crash_report_exception_handler.cc(116)] WriteEverything failed
+[1007/080502.607:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: An attempt was made to access an exiting process. (0xc000010a)
+[1212/150118.161:ERROR:process_info.cc(359)] UncheckedAllocate
+[0212/131922.950:ERROR:process_info.cc(359)] UncheckedAllocate
+[0220/152205.879:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0221/152208.750:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0222/152211.195:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0223/152213.558:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0224/152216.388:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0225/152218.724:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0226/152221.338:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0308/000609.432:ERROR:process_info.cc(359)] UncheckedAllocate
+[0308/010112.449:ERROR:process_info.cc(359)] UncheckedAllocate
+[0313/222249.294:ERROR:process_info.cc(359)] UncheckedAllocate
+[0314/022150.254:ERROR:process_info.cc(359)] UncheckedAllocate
+[0314/022802.520:ERROR:process_info.cc(359)] UncheckedAllocate
+[0314/022905.668:ERROR:process_info.cc(359)] UncheckedAllocate
+[0314/023008.431:ERROR:process_info.cc(359)] UncheckedAllocate
+[0315/220956.387:ERROR:process_info.cc(359)] UncheckedAllocate
+[0315/220956.423:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/025709.090:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/025709.664:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/025713.219:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/025713.454:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/025718.981:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/231416.791:ERROR:process_info.cc(359)] UncheckedAllocate
+[0316/232721.678:ERROR:process_info.cc(359)] UncheckedAllocate
+[0321/005936.085:ERROR:process_info.cc(359)] UncheckedAllocate
+[0321/005936.328:ERROR:process_info.cc(359)] UncheckedAllocate
+[0323/000159.801:ERROR:process_info.cc(359)] UncheckedAllocate
+[0324/024700.218:ERROR:process_info.cc(359)] UncheckedAllocate
+[0503/031008.155:ERROR:process_info.cc(359)] UncheckedAllocate
+[0503/033000.734:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Error (0x13D) while retrieving error. (0x6D)
+[0724/100755.365:ERROR:process_info.cc(359)] UncheckedAllocate
+[0725/085105.498:ERROR:crash_report_database_win.cc(569)] CreateDirectory C:\Users\xjpn1\AppData\Local\Temp\scoped_dir4492_5600\Crashpad: There is not enough space on the disk. (0x70)
+[0725/085105.505:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0725/085105.510:ERROR:crash_report_database_win.cc(569)] CreateDirectory C:\Users\xjpn1\AppData\Local\Temp\scoped_dir4492_5600\Crashpad: There is not enough space on the disk. (0x70)
+[0804/073942.717:ERROR:process_info.cc(359)] UncheckedAllocate
+[0804/075240.594:ERROR:prune_crash_reports.cc(34)] PruneCrashReportDatabase: Failed to get pending reports
+[0804/075502.505:ERROR:process_info.cc(359)] UncheckedAllocate
+[0804/075502.512:ERROR:file_io.cc(134)] WriteFile: Error (0x13D) while retrieving error. (0x70)
+[0804/075502.513:ERROR:crash_report_exception_handler.cc(111)] WriteEverything failed
+[0804/075502.514:ERROR:filesystem_win.cc(148)] DeleteFile C:\Users\xjpn1\AppData\Local\Temp\scoped_dir15972_21511\Crashpad\reports\bed9ad09-e5f5-4b8e-81b2-5691e5d18c6b.dmp: Error (0x13D) while retrieving error. (0x20)
+[0808/094934.326:ERROR:crash_report_database_win.cc(569)] CreateDirectory C:\Users\xjpn1\AppData\Local\Temp\scoped_dir20104_2661\Crashpad: There is not enough space on the disk. (0x70)
+[0808/094934.337:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0808/094934.338:ERROR:crash_report_database_win.cc(569)] CreateDirectory C:\Users\xjpn1\AppData\Local\Temp\scoped_dir20104_2661\Crashpad: There is not enough space on the disk. (0x70)
+[0824/185323.204:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185323.209:ERROR:exception_snapshot_win.cc(88)] thread ID 22568 not found in process
+[0824/185323.378:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185323.379:ERROR:exception_snapshot_win.cc(88)] thread ID 23016 not found in process
+[0824/185324.030:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185324.031:ERROR:exception_snapshot_win.cc(88)] thread ID 17752 not found in process
+[0824/185324.212:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185324.213:ERROR:exception_snapshot_win.cc(88)] thread ID 23264 not found in process
+[0824/185325.317:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185325.318:ERROR:exception_snapshot_win.cc(88)] thread ID 23192 not found in process
+[0824/185325.666:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185325.667:ERROR:exception_snapshot_win.cc(88)] thread ID 22616 not found in process
+[0824/185328.277:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185328.278:ERROR:exception_snapshot_win.cc(88)] thread ID 11152 not found in process
+[0824/185328.586:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185328.587:ERROR:exception_snapshot_win.cc(88)] thread ID 6888 not found in process
+[0824/185330.390:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185330.391:ERROR:exception_snapshot_win.cc(88)] thread ID 10468 not found in process
+[0824/185330.726:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185330.726:ERROR:exception_snapshot_win.cc(88)] thread ID 18700 not found in process
+[0824/185330.928:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0824/185330.929:ERROR:exception_snapshot_win.cc(88)] thread ID 13840 not found in process
+[0825/074603.299:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0825/074603.300:ERROR:exception_snapshot_win.cc(88)] thread ID 9544 not found in process
+[0825/074603.532:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0825/074603.533:ERROR:exception_snapshot_win.cc(88)] thread ID 17224 not found in process
+[0826/074449.882:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0826/074449.883:ERROR:exception_snapshot_win.cc(88)] thread ID 12476 not found in process
+[0826/074450.118:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0826/074450.119:ERROR:exception_snapshot_win.cc(88)] thread ID 8944 not found in process

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+
+<project basedir="." name="StoresCentralProject">
+	<property name="srcdir" location="src"/>
+	<property name="bindir" location="bin"/>
+	<property name="libdir" location="lib"/>
+	<property name="outputdir" location="test-output"/>
+	<property name="junit-html-report" location="${outputdir}/junithtml-reports"/>
+	<property name="junit-xml-report" location="${outputdir}/junitreports" />
+
+	
+	<taskdef resource="testngtasks" classpath="${libdir}/testng/testng-6.9.9.jar"/>
+
+		<path id="classpath.base">
+			<fileset dir="${libdir}">
+				<include name="testng/*.jar" />
+				<include name="jdom/*.jar" />
+				<include name="selenium/*.jar" />
+				<include name="selenium/libs/*.jar" />
+				<include name="log4j2/*.jar" />
+				<include name="extentreports/*.jar" />
+				<include name="extentreports/lib/*.jar" />
+				<include name="jdbc/*.jar" />		
+			</fileset>
+		</path>
+
+		<path id="classpath.test">
+			<pathelement location="." />
+			<pathelement location="${bindir}" />
+			<pathelement location="${srcdir}" />
+			<path refid="classpath.base" />
+		</path>
+
+		<target name="init" depends="clean">
+			<mkdir dir="${bindir}" />
+		</target>
+
+		<target name="compile" depends="init">
+			<javac srcdir="${srcdir}" destdir="${bindir}"
+				debug="false"
+				includeantruntime="true">
+				<classpath refid="classpath.base"/>
+			</javac>
+			<copy file="${srcdir}/log4j2.xml" todir="${bindir}" />
+		</target>
+
+		<target name="clean">
+		  <delete includeemptydirs="true" failonerror="false">
+		  	<fileset dir="junit-html-report" includes="**/*" />
+		    <fileset dir="${outputdir}" includes="**/*"/>
+		  </delete>		
+		<delete dir="${bindir}" />
+		</target>
+
+		<!--
+		
+		In Jenkins you can pass system properties in the "Targets" field.
+
+		  -Dselenium.tests.remoteServer=4qmtgs1.hq.target.com -Dselenium.tests.baseUrl=http://4qmtgs1.hq.target.com/MyStoreUI/app/index-mock.html#access_token=temp
+
+		Alternately system properties can be propagated to the tests this way
+			groups="SmokeTests"
+		  <sysproperty key="selenium.tests.remoteServer" value="4qmtgs1.hq.target.com"/>
+		  <sysproperty key="selenium.tests.baseUrl" value="http://4qmtgs1.hq.target.com/MyStoreUI/app/index-mock.html#access_token=temp"/>
+		-->
+
+		<target name="test" depends="compile">
+				<!-- see http://testng.org/doc/ant.html -->
+			
+				<testng outputdir="${outputdir}"
+					classpathref="classpath.test"
+					delegateCommandSystemProperties="true"
+				    listeners="org.testng.reporters.EmailableReporter,org.testng.reporters.XMLReporter">
+				<xmlfileset dir="." includes="testng.xml"/>			
+				</testng>
+			<mkdir dir="${junit-html-report}"/>
+				<junitreport todir="${junit-html-report}">
+				      <fileset dir="${junit-xml-report}">
+				        <include name="**/*.xml" />
+				      </fileset>
+				      <report format="noframes" todir="${junit-html-report}" />
+				    </junitreport>
+			</target>	
+	<!--  <target name="junit-report" depends="test">
+		<mkdir dir="${junit-html-report}" />
+		<junitreport todir="${junit-html-report}">
+		      <fileset dir="${junit-xml-report}">
+		        <include name="**/*.xml" />
+		      </fileset>
+		      <report format="noframes" todir="${junit-html-report}" />
+		    </junitreport>
+		
+	</target>
+	-->
+		
+</project>

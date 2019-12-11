@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+<TCName name = "AllocationofFixHours" >
+
+	<TaskCode>
+	<![CDATA[select distinct tk.task_nm,tk.ref_cd
+from
+ww_Wlp.lbr_Std A inner join
+ww_wlp.wk w
+on A.wk_id=w.wk_id inner join
+task tk
+on A.task_No=tk.task_No inner join 
+ww_wlp.loc_task lt
+on A.task_No=lt.task_No and a.loc_no=lt.loc_no  and tk.task_no=lt.task_no
+where w.fin_yr='FinYr' and w.fin_wk_no='FinWk' and tk.dept_no in ('Department') and A.loc_no='store'  and A.day_of_wk in (0,1,2,3,4,5,6)
+--and a.task_no='600062'
+order by tk.task_nm]]>
+	</TaskCode>
+	
+	<VarStd>
+	<![CDATA[select distinct tk.task_nm,A.VAR_PER_MTRC_TYPE_CD
+from
+ww_Wlp.lbr_Std A inner join
+ww_wlp.wk w
+on A.wk_id=w.wk_id inner join
+ww_wlp.task tk
+on A.task_No=tk.task_No inner join
+loc_task lt
+on a.task_no=lt.task_no and a.loc_no=lt.loc_no and tk.task_no=lt.task_no
+where w.fin_yr='FinYr' and w.fin_wk_no='FinWk' and tk.dept_no in ('Department') and A.loc_no='store'  and A.day_of_wk in (0,1,2,3,4,5,6)
+--and a.task_no='600062'
+order by tk.task_nm]]>
+	</VarStd>
+	
+	<VarType>
+	<![CDATA[select distinct tk.task_nm,tk.mtrc_type_cd
+from
+ww_Wlp.lbr_Std A inner join
+ww_wlp.wk w
+on A.wk_id=w.wk_id inner join
+ww_wlp.task tk
+on A.task_No=tk.task_No inner join
+loc_task lt
+on a.task_no=lt.task_no and a.loc_no=lt.loc_no and tk.task_no=lt.task_no
+where w.fin_yr='FinYr' and w.fin_wk_no='FinWk' and tk.dept_no in ('Department') and A.loc_no='store'  and A.day_of_wk in (0,1,2,3,4,5,6)
+--and a.task_no='600062'
+order by tk.task_nm]]>
+	</VarType>
+
+	<Priority>
+	<![CDATA[select distinct tk.task_nm,nvl(tk.dflt_prty,0) as Priority
+from
+ww_Wlp.lbr_Std A inner join
+ww_wlp.wk w
+on A.wk_id=w.wk_id inner join
+ww_wlp.task tk
+on A.task_No=tk.task_No inner join
+loc_task lt
+on a.task_no=lt.task_no and a.loc_no=lt.loc_no and tk.task_no=lt.task_no
+where w.fin_yr='FinYr' and w.fin_wk_no='FinWk' and tk.dept_no in ('Department') and A.loc_no='store'  and A.day_of_wk in (0,1,2,3,4,5,6)
+--and a.task_no='600062'
+order by tk.task_nm]]>
+	</Priority>
+	<FixedHoursPercentage>
+	<![CDATA[select z.task_nm,z.mon,z.tue,z.wed,z.thu,z.fri,z.sat,z.sun from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.fix_hrs_pct)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.fix_hrs_pct)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.fix_hrs_pct)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.fix_hrs_pct)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.fix_hrs_pct)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.fix_hrs_pct)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.fix_hrs_pct)),0) as sun from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt 
+where a.dept_no='Department' and b.wk_id='Week'
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no) x
+left outer join 
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs_pct from fix_hrs_wky_sprd_gbl a, task b, loc_task lt
+where a.loc_no='store' and a.task_no=b.task_no and b.dept_no='Department' and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z
+]]>
+	</FixedHoursPercentage>
+  
+   
+	<FixedHoursPercentageTotal>
+	<![CDATA[select z.task_nm,
+(z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun) as wtd from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.fix_hrs_pct)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.fix_hrs_pct)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.fix_hrs_pct)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.fix_hrs_pct)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.fix_hrs_pct)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.fix_hrs_pct)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.fix_hrs_pct)),0) as sun from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt 
+where a.dept_no='Department' and b.wk_id='Week'
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+order by a.task_nm,b.day_of_wk) x
+left outer join 
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs_pct from fix_hrs_wky_sprd_gbl a, task b, loc_task lt
+where a.loc_no='store' and a.task_no=b.task_no and b.dept_no='Department' and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z]]>
+	</FixedHoursPercentageTotal>
+		<FixedHours>
+	<![CDATA[select x.task_nm,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.fix_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.fix_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.fix_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.fix_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.fix_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.fix_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.fix_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt   
+where a.dept_no='Department' and b.wk_id='Week'
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+ and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm]]>
+	</FixedHours>
+	<FixedHoursTotal>
+	<![CDATA[select x.task_nm,nvl(ROUND(y.fix_hrs,2),0) as fix_hrs from 
+(select distinct a.task_nm,a.task_no from task a, lbr_std c , loc_task lt
+where a.dept_no='Department' and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+and a.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by a.task_nm) x
+left outer join
+(select distinct task_no,fix_hrs from fix_hrs_wky where loc_no='store' and wk_id='Week' 
+and task_no in (select task_no from task where dept_no='Department')
+and task_no in (select task_no from lbr_std where loc_no='store' and wk_id='Week')
+and task_no in (select task_no from loc_task where loc_no='store')) y
+on x.task_no=y.task_no order by x.task_nm]]>
+	</FixedHoursTotal>
+	<VarHoursLonglife>
+	<![CDATA[select x.task_nm,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt     
+where a.dept_no='Department' and b.wk_id='Week'
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm]]>
+	</VarHoursLonglife>
+	<VarHoursLonglifeTotal>
+	<![CDATA[select z.task_nm,ROUND((z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun),2)as wtd from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt      
+where a.dept_no='Department' and b.wk_id='Week'
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z]]>
+	</VarHoursLonglifeTotal>
+	<VarHoursNonLonglife>
+	<![CDATA[select x.task_nm,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c , loc_task lt        
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm]]>
+	</VarHoursNonLonglife>
+	<VarHoursNonLonglifeTotal>
+	<![CDATA[select z.task_nm,ROUND((z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun),2)as wtd from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt         
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z]]>
+	</VarHoursNonLonglifeTotal>
+	
+  <TotalHoursLonglife>
+	<![CDATA[select x.task_nm,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt           
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm]]>
+	</TotalHoursLonglife>
+	<TotalHoursLonglifeTtl>
+	<![CDATA[select n.task_nm,(n.fix_hrs+b.var_hrs) as totalhours from 
+(select x.task_nm,nvl(ROUND(y.fix_hrs,2),0) as fix_hrs from 
+(select distinct a.task_nm,a.task_no from task a, lbr_std c, loc_task lt 
+where a.dept_no='Department' and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+and a.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no 
+order by a.task_nm) x
+left outer join
+(select distinct task_no,fix_hrs from fix_hrs_wky where loc_no='store' and wk_id='Week' 
+and task_no in (select task_no from task where dept_no='Department')
+and task_no in (select task_no from lbr_std where loc_no='store' and wk_id='Week')
+and task_no in (select task_no from loc_task where loc_no='store')) y
+on x.task_no=y.task_no order by x.task_nm) n,
+(select z.task_nm,ROUND((z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun),2) as var_hrs from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt            
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z) b
+where n.task_nm=b.task_nm order by n.task_nm]]>
+	</TotalHoursLonglifeTtl>
+	<TotalHoursNonLonglife>
+	<![CDATA[select x.task_nm,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt            
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm]]>
+	</TotalHoursNonLonglife>
+	<TotalHoursNonLonglifeTtl>
+	<![CDATA[select n.task_nm,(n.fix_hrs+b.var_hrs) as totalhours from 
+(select x.task_nm,nvl(ROUND(y.fix_hrs,2),0) as fix_hrs from 
+(select distinct a.task_nm,a.task_no from task a, lbr_std c, loc_task lt 
+where a.dept_no='Department' and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+and a.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no 
+order by a.task_nm) x
+left outer join
+(select distinct task_no,fix_hrs from fix_hrs_wky where loc_no='store' and wk_id='Week' 
+and task_no in (select task_no from task where dept_no='Department')
+and task_no in (select task_no from lbr_std where loc_no='store' and wk_id='Week')
+and task_no in (select task_no from loc_task where loc_no='store')) y
+on x.task_no=y.task_no order by x.task_nm) n,
+(select z.task_nm,ROUND((z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun),2) as var_hrs from 
+(select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt            
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm) z) b
+where n.task_nm=b.task_nm]]>
+	</TotalHoursNonLonglifeTtl>
+	<TotalDailyHoursLonglife>
+	<![CDATA[select 'Total Daily Hours' as tot ,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt              
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+]]>
+	</TotalDailyHoursLonglife>
+	<TotalDailyHoursLonglifeTotal>
+	<![CDATA[select 'Total Daily Hours' as tot ,ROUND(sum(wtd),2) as WTD from
+(select z.task_nm,(z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun)as wtd from (select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt                
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm ) z)
+]]>
+	</TotalDailyHoursLonglifeTotal>
+	
+	<TotalDailyHoursNonLonglife>
+	<![CDATA[select 'Total Daily Hours' as tot ,
+nvl(ROUND(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),2),0) as mon,
+nvl(ROUND(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),2),0) as tue,
+nvl(ROUND(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),2),0) as wed,
+nvl(ROUND(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),2),0) as thu,
+nvl(ROUND(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),2),0) as fri,
+nvl(ROUND(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),2),0) as sat,
+nvl(ROUND(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),2),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt                  
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+]]>
+	</TotalDailyHoursNonLonglife>
+	<TotalDailyHoursNonLonglifeTotal>
+	<![CDATA[select 'Total Daily Hours' as tot,ROUND(sum(wtd),2) as WTD from
+(select z.task_nm,(z.mon+z.tue+z.wed+z.thu+z.fri+z.sat+z.sun)as wtd from (select x.task_nm,
+nvl(sum(decode(x.day_of_wk, 0 , y.vol_hrs+y.fix_hrs)),0) as mon,
+nvl(sum(decode(x.day_of_wk, 1 , y.vol_hrs+y.fix_hrs)),0) as tue,
+nvl(sum(decode(x.day_of_wk, 2 , y.vol_hrs+y.fix_hrs)),0) as wed,
+nvl(sum(decode(x.day_of_wk, 3 , y.vol_hrs+y.fix_hrs)),0) as thu,
+nvl(sum(decode(x.day_of_wk, 4 , y.vol_hrs+y.fix_hrs)),0) as fri,
+nvl(sum(decode(x.day_of_wk, 5 , y.vol_hrs+y.fix_hrs)),0) as sat,
+nvl(sum(decode(x.day_of_wk, 6 , y.vol_hrs+y.fix_hrs)),0) as sun  from 
+(select distinct a.task_nm,b.day_of_wk from task a, day b, lbr_std c  , loc_task lt                    
+where a.dept_no='Department' and b.wk_id='Week' and a.task_no=lt.task_no and c.loc_no=lt.loc_no and c.task_no=lt.task_no
+and a.task_no=c.task_no and c.loc_no='store' and c.wk_id='Week'
+order by a.task_nm,b.day_of_wk) x
+left outer join
+(select distinct b.task_nm,a.day_of_wk,a.fix_hrs,a.vol_hrs from lbr_std a, task b, fix_hrs_wky_sprd_gbl c, loc_task lt
+where a.task_no=b.task_no and b.dept_no='Department' and a.loc_no='store' and a.wk_id='Week'
+and a.task_no=c.task_no and a.loc_no=c.loc_no and a.day_of_wk=c.day_of_wk
+and a.task_no=lt.task_no and a.loc_no=lt.loc_no and b.task_no=lt.task_no and c.task_no=lt.task_no and c.loc_no=lt.loc_no
+order by b.task_nm,a.day_of_wk) y
+on x.task_nm=y.task_nm and x.day_of_wk=y.day_of_wk
+group by x.task_nm order by x.task_nm ) z)
+]]>
+	</TotalDailyHoursNonLonglifeTotal>
+</TCName>
+
+</configuration>

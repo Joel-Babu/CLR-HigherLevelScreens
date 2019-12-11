@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+<TCName name = "WeekTypeColumn" >
+	<SalesActual_Storetotal>
+	<![CDATA[select actl_sls_cy.ACTL_SLS_CY_FC from 
+(select NVL(ROUND(sum(U.ACTL_SLS_MPS),0),0) as ACTL_SLS_CY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('FinYear') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.ACTL_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.actl_sls),0) as ACTL_SLS_MPS 
+from WW_WLP.DLY_SLS a,WW_WLP.WK b,loc lc , loc_dept ld
+where a.TXN_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('FinYear') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division'
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no NOT IN (0,20,90) 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) actl_sls_cy]]>
+	</SalesActual_Storetotal>
+	
+	<SalesActual_Deptwise>
+	<![CDATA[select actl_sls_cy.ACTL_SLS_CY_FC from 
+(select NVL(ROUND(sum(U.ACTL_SLS_MPS),0),0) as ACTL_SLS_CY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('FinYear') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.ACTL_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.actl_sls),0) as ACTL_SLS_MPS 
+from WW_WLP.DLY_SLS a,WW_WLP.WK b,loc lc , loc_dept ld
+where a.TXN_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('FinYear') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division'
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no IN ('DepartmentToView') 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) actl_sls_cy
+	]]>
+	</SalesActual_Deptwise>
+	
+	<SalesLY_Storetotal>
+	<![CDATA[select actl_sls_ly.ACTL_SLS_LY_FC from 
+(select NVL(ROUND(sum(U.ACTL_SLS_MPS),0),0) as ACTL_SLS_LY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('LyFinYr') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.ACTL_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.actl_sls),0) as ACTL_SLS_MPS 
+from WW_WLP.DLY_SLS a,WW_WLP.WK b,loc lc , loc_dept ld
+where a.TXN_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('LyFinYr') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division'
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no NOT IN (0,20,90) 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) actl_sls_ly]]>
+	</SalesLY_Storetotal>
+	
+	<SalesLY_Deptwise>
+	<![CDATA[select actl_sls_ly.ACTL_SLS_LY_FC from 
+(select NVL(ROUND(sum(U.ACTL_SLS_MPS),0),0) as ACTL_SLS_LY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('LyFinYr') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.ACTL_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.actl_sls),0) as ACTL_SLS_MPS 
+from WW_WLP.DLY_SLS a,WW_WLP.WK b,loc lc , loc_dept ld
+where a.TXN_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('LyFinYr') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division'
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no IN ('DepartmentToView') 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) actl_sls_ly]]>
+	</SalesLY_Deptwise>
+	
+	<SalesForecast_Storetotal>
+	<![CDATA[select gen_sls_cy.GEN_SLS_CY_FC from 
+(select NVL(ROUND(sum(U.GEN_SLS_MPS),0),0) as GEN_SLS_CY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('FinYear') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.GEN_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.gnrt_sls),0) as GEN_SLS_MPS 
+from WW_WLP.fcst a, WW_WLP.WK b,loc lc , loc_dept ld
+where a.fcst_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('FinYear') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division  '
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no NOT IN (0,20,90) 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) gen_sls_cy]]>
+	</SalesForecast_Storetotal>
+	
+	<SalesForecast_Deptwise>
+	<![CDATA[select gen_sls_cy.GEN_SLS_CY_FC from 
+(select NVL(ROUND(sum(U.GEN_SLS_MPS),0),0) as GEN_SLS_CY_FC from 
+(select wk_id,fin_wk_no||' - '||wk_strt as wk_strt from wk where fin_yr in ('FinYear') order by wk_id) T 
+LEFT OUTER JOIN 
+(select S.loc_nm,S.perd_desc,S.wk_id,S.GEN_SLS_MPS from 
+(select lc.loc_nm,b.perd_desc,b.wk_id, ROUND(sum(a.gnrt_sls),0) as GEN_SLS_MPS 
+from WW_WLP.fcst a, WW_WLP.WK b,loc lc , loc_dept ld
+where a.fcst_DTE between b.WK_STRT and b.WK_END and b.fin_yr in ('FinYear') 
+and a.loc_no=lc.loc_no and a.div_no=lc.div_no and a.loc_no in ('store') and a.div_no = 'Division  '
+and a.div_no=ld.div_no and a.loc_no=ld.loc_no and a.dept_no=ld.dept_no and a.Dept_no IN ('DepartmentToView') 
+and ld.div_no=lc.div_no and ld.loc_no=lc.loc_no 
+group by lc.loc_nm,b.perd_desc,b.wk_id order by b.wk_id) S) U on T.wk_id=U.wk_id group by T.wk_id,T.wk_strt order by T.wk_id,T.wk_strt) gen_sls_cy]]>
+	</SalesForecast_Deptwise>	
+	
+<WkDay_SalesActual_Storetotal>
+<![CDATA[]]>
+	</WkDay_SalesActual_Storetotal>
+	
+	<WkDay_SalesActual_Deptwise>
+	<![CDATA[]]>
+	</WkDay_SalesActual_Deptwise>
+</TCName>
+
+</configuration>
